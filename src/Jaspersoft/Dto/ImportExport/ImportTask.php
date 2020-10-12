@@ -33,12 +33,16 @@ class ImportTask
      * @var boolean
      */
     public $includeServerSettings;
+    /**
+     * @var string
+     */
+    public $brokenDependencies;
 
     public function queryData()
     {
         $data = array();
         foreach (get_object_vars($this) as $k => $v) {
-            if (!empty($v) && $v == true) {
+            if (!empty($v) && gettype($v) == "boolean" && $v == true) {
                 $data[$k] = 'true';
             } elseif (!empty($v)) {
                 $data[$k] = $v;

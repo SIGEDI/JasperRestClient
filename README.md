@@ -1,6 +1,8 @@
 PHP REST Client for JRS
 =======================================
 
+This is a copy of Jaspersoft/jrs-rest-php-client with small enhancements.
+
 Introduction
 -------------
 Using this library you can make requests and interact with the Jasper Reports Server through the REST API in native PHP. This allows you to more easily embed data from your report server, or perform administrative tasks on the server using PHP.
@@ -19,7 +21,7 @@ Add the following to your composer.json file for your project, or run `php compo
 
     {
 	    "require": {
-		    "jaspersoft/rest-client": "*"
+		    "hboie/jasper-rest-client": "*"
 	    }
     }
 

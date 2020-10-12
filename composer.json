@@ -1,14 +1,14 @@
 {
-    "name": "jaspersoft/rest-client",
+    "name": "hboie/jasper-rest-client",
     "description": "A client for the JasperReports Server REST API",
     "license": "LGPL-3.0",
     "authors": [
         {
-            "name": "Jaspersoft",
-            "email": "code@jaspersoft.com"
+            "name": "Hans Boie",
+            "email": "hans.boie@gmx.de"
         }
     ],
-	"homepage": "http://github.com/Jaspersoft/jrs-rest-php-client",
+	"homepage": "https://github.com/hboie/JasperRestClient",
 	"keywords": ["jasperreports","jaspersoft", "jasper-reports", "reporting"],
     "require": {
 		"php": ">=5.3.0",

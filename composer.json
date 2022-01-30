@@ -12,7 +12,8 @@
 	"keywords": ["jasperreports","jaspersoft", "jasper-reports", "reporting"],
     "require": {
 		"php": ">=5.3.0",
-		"ext-curl": "*"
+		"ext-curl": "*",
+        "ext-json": "*"
     },
 	"autoload": {
 		"psr-0": {

@@ -61,12 +61,28 @@ class RepositoryService
         $headers = RESTRequest::splitHeaderArray($response['headers']);
 
         // If forceTotalCount is not enabled, the server doesn't return totalCount when offset is specified
-        if(!isset($headers['Total-Count']))
-            $totalCount = null;
-        else
+        if( isset($headers['Total-Count']) )
             $totalCount = (int) $headers['Total-Count'];
+        else if( isset($headers['total-count']) )
+            $totalCount = (int) $headers['total-count'];
+        else
+            $totalCount = null;
 
-        return new SearchResourcesResult(json_decode($data), (int) $headers['Result-Count'], (int) $headers['Start-Index'], $totalCount);
+        if( isset($headers['Result-Count']) )
+            $resultCount = (int) $headers['Result-Count'];
+        else if( isset($headers['result-count']) )
+            $resultCount = (int) $headers['result-count'];
+        else
+            $resultCount = 0;
+
+        if( isset($headers['Start-Index']) )
+            $startIndex = (int) $headers['Start-Index'];
+        else if( isset($headers['Start-Index']) )
+            $startIndex = (int) $headers['Start-Index'];
+        else
+            $startIndex = 0;
+
+        return new SearchResourcesResult(json_decode($data), $resultCount, $startIndex, $totalCount);
     }
 
     /**

@@ -21,7 +21,7 @@ Add the following to your composer.json file for your project, or run `php compo
 
     {
 	    "require": {
-		    "hboie/jasper-rest-client": "*"
+		    "sigedi/jasper-rest-client": "*"
 	    }
     }
 

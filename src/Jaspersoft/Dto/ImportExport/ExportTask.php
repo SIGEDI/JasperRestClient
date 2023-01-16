@@ -1,34 +1,33 @@
 <?php
+
 namespace Jaspersoft\Dto\ImportExport;
 
 /**
  * Class ExportTask
- * Define an export task to be executed
- *
- * @package Jaspersoft\Dto\ImportExport
+ * Define an export task to be executed.
  */
 class ExportTask
 {
     /**
-     * Usernames to be exported
+     * Usernames to be exported.
      *
      * @var array
      */
-    public $users = array();
+    public $users = [];
     /**
-     * Uris of resources to be exported
+     * Uris of resources to be exported.
      *
      * @var array
      */
-    public $uris = array();
+    public $uris = [];
     /**
-     * List of role names to be exported
+     * List of role names to be exported.
      *
      * @var array
      */
-    public $roles = array();
+    public $roles = [];
     /**
-     * Parameters for defining type of exports
+     * Parameters for defining type of exports.
      *
      * Possible values:
      *  'everything' - Export everything except audit data: all repository resources, permissinos, report jobs, users and roles
@@ -39,15 +38,17 @@ class ExportTask
      *
      * @var array
      */
-    public $parameters = array();
+    public $parameters = [];
 
     public function jsonSerialize()
-	{
-        $data = array();
+    {
+        $data = [];
         foreach (get_object_vars($this) as $k => $v) {
-            if (!empty($v))
+            if (!empty($v)) {
                 $data[$k] = $v;
+            }
         }
+
         return $data;
     }
 
@@ -55,5 +56,4 @@ class ExportTask
     {
         return json_encode($this->jsonSerialize());
     }
-
 }

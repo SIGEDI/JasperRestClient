@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 
 <?php
-	function inject_sample($file) {
-		$dirfile = dirname(__FILE__) . '/'. $file;
-		if(empty($dirfile) || !file_exists($dirfile)) { 
-			printf('Cannot open sample code: %s', $dirfile);
-			return false;
-		}
-		$fh = fopen($dirfile, 'r')
-			or printf('Cannot open sample code');
-		$contents = fread($fh, filesize($dirfile));
-		echo htmlentities($contents);
-		fclose($fh);
-	}
+    function inject_sample($file)
+    {
+        $dirfile = dirname(__FILE__).'/'.$file;
+        if (empty($dirfile) || !file_exists($dirfile)) {
+            printf('Cannot open sample code: %s', $dirfile);
+
+            return false;
+        }
+        $fh = fopen($dirfile, 'r')
+            or printf('Cannot open sample code');
+        $contents = fread($fh, filesize($dirfile));
+        echo htmlentities($contents);
+        fclose($fh);
+    }
 ?>
 
 <html>

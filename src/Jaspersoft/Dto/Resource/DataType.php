@@ -1,9 +1,9 @@
 <?php
+
 namespace Jaspersoft\Dto\Resource;
 
 /**
- * Class DataType
- * @package Jaspersoft\Dto\Resource
+ * Class DataType.
  */
 class DataType extends Resource
 {

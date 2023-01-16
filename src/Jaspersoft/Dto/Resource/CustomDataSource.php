@@ -1,9 +1,9 @@
 <?php
+
 namespace Jaspersoft\Dto\Resource;
 
 /**
- * Class CustomDataSource
- * @package Jaspersoft\Dto\Resource
+ * Class CustomDataSource.
  */
 class CustomDataSource extends CollectiveResource
 {

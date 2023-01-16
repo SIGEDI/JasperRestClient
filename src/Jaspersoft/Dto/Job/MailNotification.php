@@ -1,59 +1,63 @@
 <?php
+
 namespace Jaspersoft\Dto\Job;
 
 /**
- * Class MailNotification
- * @package Jaspersoft\Dto\Job
+ * Class MailNotification.
  */
 class MailNotification
 {
-
     /**
-     * Read-only value of server-declared ID
+     * Read-only value of server-declared ID.
      *
      * @var int
      */
     public $id;
 
     /**
-     * Read-only value used for optimistic locking
+     * Read-only value used for optimistic locking.
      *
      * @var int
      */
     public $version;
 
     /**
-     * To recipients
+     * To recipients.
+     *
      * @var array
      */
     public $toAddresses;
 
     /**
-     * Carbon Copy recipients
+     * Carbon Copy recipients.
+     *
      * @var array
      */
     public $ccAddresses;
 
     /**
-     * Blind Carbon Copy recipients
+     * Blind Carbon Copy recipients.
+     *
      * @var array
      */
     public $bccAddresses;
 
     /**
-     * Email Subject Text
+     * Email Subject Text.
+     *
      * @var string
      */
     public $subject;
 
     /**
-     * Email Body Text
+     * Email Body Text.
+     *
      * @var string
      */
     public $messageText;
 
     /**
-     * Determines whether notification includes job as attachments, or links
+     * Determines whether notification includes job as attachments, or links.
      *
      * Supported Values:
      *   "SEND" - Notification contains links to job output generated in repository
@@ -74,12 +78,12 @@ class MailNotification
      *
      * Default: false
      *
-     * @var boolean
+     * @var bool
      */
     public $skipEmptyReports;
 
     /**
-     * The text of the Email Body for when a job fails
+     * The text of the Email Body for when a job fails.
      *
      * @var string
      */
@@ -90,7 +94,7 @@ class MailNotification
      *
      * Default: false
      *
-     * @var boolean
+     * @var bool
      */
     public $includingStackTraceWhenJobFails;
 
@@ -99,61 +103,60 @@ class MailNotification
      *
      * Default: false
      *
-     * @var boolean
+     * @var bool
      */
     public $skipNotificationWhenJobFails;
 
     /**
-     * Create an associative array of the data which is set to a non-null value
+     * Create an associative array of the data which is set to a non-null value.
      *
      * @return array
      */
     public function jsonSerialize()
     {
-        $result = array();
+        $result = [];
         foreach (get_object_vars($this) as $k => $v) {
             if (isset($v)) {
                 // JSON specification set by server requires sublevel of "address" for these
                 // attributes of the MailNotification, so they are special cases handled below
-                if ($k == "toAddresses") {
-                    $result[$k] = array("address" => $this->toAddresses);
-                }
-                else if ($k == "ccAddresses") {
-                    $result[$k] = array("address" => $this->ccAddresses);
-                }
-                else if ($k == "bccAddresses") {
-                    $result[$k] = array("address" => $this->bccAddresses);
-                }
-                else {
+                if ($k === 'toAddresses') {
+                    $result[$k] = ['address' => $this->toAddresses];
+                } elseif ($k === 'ccAddresses') {
+                    $result[$k] = ['address' => $this->ccAddresses];
+                } elseif ($k === 'bccAddresses') {
+                    $result[$k] = ['address' => $this->bccAddresses];
+                } else {
                     $result[$k] = $v;
                 }
             }
         }
+
         return $result;
     }
 
     /**
      * This function takes a \stdClass decoded by json_decode representing a scheduled job
-     * and casts it as a MailNotification Object
+     * and casts it as a MailNotification Object.
      *
      * @param \stdClass $json_obj
+     *
      * @return MailNotification
      */
     public static function createFromJSON($json_obj)
     {
         $result = new self();
         foreach ($json_obj as $k => $v) {
-            if ($k == "toAddresses") {
+            if ($k === 'toAddresses') {
                 $result->toAddresses = (array) $v->address;
-            } else if ($k == "ccAddresses") {
+            } elseif ($k === 'ccAddresses') {
                 $result->ccAddresses = (array) $v->address;
-            } else if ($k == "bccAddresses") {
+            } elseif ($k === 'bccAddresses') {
                 $result->bccAddresses = (array) $v->address;
             } else {
                 $result->$k = $v;
             }
         }
+
         return $result;
     }
-
 }

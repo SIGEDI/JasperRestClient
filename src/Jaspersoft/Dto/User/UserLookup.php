@@ -1,9 +1,9 @@
 <?php
+
 namespace Jaspersoft\Dto\User;
 
 /**
- * Class UserLookup
- * @package Jaspersoft\Dto\User
+ * Class UserLookup.
  */
 class UserLookup
 {
@@ -16,7 +16,7 @@ class UserLookup
      */
     public $fullName;
     /**
-     * @var boolean
+     * @var bool
      */
     public $externallyDefined;
     /**
@@ -34,10 +34,10 @@ class UserLookup
 
     public function jsonSerialize()
     {
-        return array(
+        return [
             'username' => $this->username,
             'fullName' => $this->fullName,
-            'externallyDefined' => $this->externallyDefined
-        );
+            'externallyDefined' => $this->externallyDefined,
+        ];
     }
 }

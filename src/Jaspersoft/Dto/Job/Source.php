@@ -1,11 +1,12 @@
 <?php
+
 namespace Jaspersoft\Dto\Job;
 
 class Source
 {
-
     /**
-     * URI of the report unit or report options to schedule
+     * URI of the report unit or report options to schedule.
+     *
      * @var string
      */
     public $reportUnitURI;
@@ -18,17 +19,17 @@ class Source
      *
      * @var array
      */
-    public $parameters = array();
+    public $parameters = [];
 
     public function jsonSerialize()
     {
-        $result = array();
+        $result = [];
         if (!empty($this->reportUnitURI)) {
-            $result["reportUnitURI"] = $this->reportUnitURI;
+            $result['reportUnitURI'] = $this->reportUnitURI;
         }
 
         if (!empty($this->parameters)) {
-            $result["parameters"] = array("parameterValues" => $this->parameters);
+            $result['parameters'] = ['parameterValues' => $this->parameters];
         }
 
         return $result;
@@ -38,14 +39,13 @@ class Source
     {
         $result = new self();
         foreach ($json_obj as $k => $v) {
-            if ($k == "parameters" && !empty($v->parameterValues)) {
+            if ($k === 'parameters' && !empty($v->parameterValues)) {
                 $result->parameters = (array) $v->parameterValues;
-            }
-            else {
+            } else {
                 $result->$k = $v;
             }
         }
+
         return $result;
     }
-
-} 
+}

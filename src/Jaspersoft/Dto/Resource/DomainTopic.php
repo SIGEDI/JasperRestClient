@@ -1,9 +1,9 @@
 <?php
+
 namespace Jaspersoft\Dto\Resource;
 
 /**
- * Class DomainTopic
- * @package Jaspersoft\Dto\Resource
+ * Class DomainTopic.
  */
 class DomainTopic extends ReportUnit
 {

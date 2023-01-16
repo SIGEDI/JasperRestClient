@@ -1,9 +1,9 @@
 <?php
+
 namespace Jaspersoft\Dto\Resource;
 
 /**
- * Class BeanDataSource
- * @package Jaspersoft\Dto\Resource
+ * Class BeanDataSource.
  */
 class BeanDataSource extends Resource
 {

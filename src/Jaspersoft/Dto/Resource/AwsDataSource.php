@@ -1,9 +1,9 @@
 <?php
+
 namespace Jaspersoft\Dto\Resource;
 
 /**
- * Class AwsDataSource
- * @package Jaspersoft\Dto\Resource
+ * Class AwsDataSource.
  */
 class AwsDataSource extends Resource
 {

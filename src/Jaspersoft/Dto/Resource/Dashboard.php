@@ -1,9 +1,9 @@
 <?php
+
 namespace Jaspersoft\Dto\Resource;
 
 /**
- * Class Dashboard
- * @package Jaspersoft\Dto\Resource
+ * Class Dashboard.
  */
 class Dashboard extends Resource
 {

@@ -1,34 +1,35 @@
 <?php
+
 namespace Jaspersoft\Dto\Job;
 
 class RepositoryDestination
 {
-
     /**
-     * Read-only value of server-declared ID
+     * Read-only value of server-declared ID.
      *
      * @var int
      */
     public $id;
 
     /**
-     * Read-only value used for optimistic locking
+     * Read-only value used for optimistic locking.
      *
      * @var int
      */
     public $version;
 
     /**
-     * Repository URI of the folder to store the output
+     * Repository URI of the folder to store the output.
+     *
      * @var string
      */
     public $folderURI;
 
     /**
      * Should a timestamp be added to the names of output resources?
-     * The timestamp affixed is described by $timestampPattern
+     * The timestamp affixed is described by $timestampPattern.
      *
-     * @var boolean
+     * @var bool
      */
     public $sequentialFilenames;
 
@@ -44,12 +45,13 @@ class RepositoryDestination
     /**
      * Should the scheduler overwrite files when saving?
      *
-     * @var boolean
+     * @var bool
      */
     public $overwriteFiles;
 
     /**
-     * Description to be used for output resources, this will be used for all output resources
+     * Description to be used for output resources, this will be used for all output resources.
+     *
      * @var string
      */
     public $outputDescription;
@@ -59,12 +61,13 @@ class RepositoryDestination
      *
      * Default: true
      *
-     * @var boolean
+     * @var bool
      */
     public $saveToRepository;
 
     /**
-     * Default scheduled report output folder URI of the job owner
+     * Default scheduled report output folder URI of the job owner.
+     *
      * @var string
      */
     public $defaultReportOutputFolderURI;
@@ -74,7 +77,7 @@ class RepositoryDestination
      *
      * Default: false
      *
-     * @var boolean
+     * @var bool
      */
     public $usingDefaultReportOutputFolderURI;
 
@@ -91,24 +94,25 @@ class RepositoryDestination
     public $outputLocalFolder;
 
     /**
-     * Output FTP location information
+     * Output FTP location information.
+     *
      * @var OutputFTPInfo
      */
     public $outputFTPInfo;
 
     public function jsonSerialize()
     {
-        $result = array();
+        $result = [];
         foreach (get_object_vars($this) as $k => $v) {
             if (isset($v)) {
-                if ($k == "outputFTPInfo") {
+                if ($k === 'outputFTPInfo') {
                     $result[$k] = $v->jsonSerialize();
-                }
-                else {
+                } else {
                     $result[$k] = $v;
                 }
             }
         }
+
         return $result;
     }
 
@@ -122,6 +126,7 @@ class RepositoryDestination
         foreach ($json_obj as $k => $v) {
             $result->$k = $v;
         }
+
         return $result;
     }
 }

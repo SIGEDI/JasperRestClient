@@ -1,13 +1,12 @@
 <?php
+
 namespace Jaspersoft\Dto\Resource;
 
 /**
- * Class ResourceLookup
- * @package Jaspersoft\Dto\Resource
+ * Class ResourceLookup.
  */
 class ResourceLookup
 {
-
     public $uri;
     public $label;
     public $description;
@@ -19,25 +18,27 @@ class ResourceLookup
 
     public function __construct()
     {
-
     }
 
     public function jsonSerialize()
     {
-        $data = array();
+        $data = [];
         foreach (get_object_vars($this) as $k => $v) {
-            if (!empty($v))
+            if (!empty($v)) {
                 $data[$k] = $v;
+            }
         }
+
         return $data;
     }
 
     public static function createFromJSON($json_data)
     {
-        $temp = new self;
-        foreach ($json_data as $k => $v)
+        $temp = new self();
+        foreach ($json_data as $k => $v) {
             $temp->$k = $v;
+        }
+
         return $temp;
     }
-
 }

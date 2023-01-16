@@ -1,19 +1,17 @@
 <?php
+
 namespace Jaspersoft\Dto\Resource;
 
 use Jaspersoft\Tool\DTOMapper;
 
 /**
- * Class CollectiveResource
+ * Class CollectiveResource.
  *
  * A CollectiveResource is a Resource DTO which is not composite, but features an element which is a collection of
  * elements which needs to be mapped to specific key/value pairs.
- *
- * @package Jaspersoft\Dto\Resource
  */
 abstract class CollectiveResource extends Resource
 {
-
     public function jsonSerialize()
     {
         $parent = parent::jsonSerialize();
@@ -22,6 +20,7 @@ abstract class CollectiveResource extends Resource
                 $parent[$field] = DTOMapper::unmapCollection($parent[$field], $this->name(), $field);
             }
         }
+
         return $parent;
     }
 
@@ -34,7 +33,7 @@ abstract class CollectiveResource extends Resource
                 $parent->$field = DTOMapper::mapCollection($parent->$field, $class, $field);
             }
         }
+
         return $parent;
     }
-
-} 
+}

@@ -1,13 +1,12 @@
 <?php
+
 namespace Jaspersoft\Dto\Attribute;
 
 /**
- * Represents a user attribute
- *
- * @package Jaspersoft\Dto\Attribute
+ * Represents a user attribute.
  */
-class Attribute  {
-
+class Attribute
+{
     public $name;
     public $value;
 
@@ -16,5 +15,4 @@ class Attribute  {
         $this->name = $name;
         $this->value = $value;
     }
-
 }

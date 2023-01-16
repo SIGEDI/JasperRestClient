@@ -1,17 +1,15 @@
 <?php
+
 namespace Jaspersoft\Dto\ReportExecution;
 
 /**
  * ** NOT IN USE **
  * This class is NOT currently being utilized, but is in place for future implementation of ReportExecutions service.
  *
- *
  * Class ExecutionRequest
- * @package Jaspersoft\Dto\ReportExecution
  */
 class ExecutionRequest
 {
-
     public $reportUnitUri;
     public $async;
     public $outputFormat;
@@ -26,13 +24,13 @@ class ExecutionRequest
 
     public function jsonSerialize()
     {
-        $data = array();
+        $data = [];
         foreach (get_object_vars($this) as $k => $v) {
             if (!empty($v)) {
                 $data[$k] = $v;
             }
         }
+
         return $data;
     }
-
 }

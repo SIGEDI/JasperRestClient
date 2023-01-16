@@ -1,67 +1,72 @@
 <?php
+
 namespace Jaspersoft\Dto\Job;
 
 /**
- * Class Job
+ * Class Job.
  *
  * This class represents a scheduled job, it consists of both simple and complex attributes.
- *
- * @package Jaspersoft\Dto\Job
  */
 class Job
 {
-
     /**
-     * Job execution alert settings
+     * Job execution alert settings.
      *
      * @var Alert
      */
     public $alert;
 
     /**
-     * File name for report job output
+     * File name for report job output.
+     *
      * @var string
      */
     public $baseOutputFilename;
 
     /**
-     * Job Execution Output Destination Settings
+     * Job Execution Output Destination Settings.
+     *
      * @var RepositoryDestination
      */
     public $repositoryDestination;
 
     /**
-     * The date when the job has been created (read-only)
+     * The date when the job has been created (read-only).
+     *
      * @var string
      */
     public $creationDate;
 
     /**
-     * The job description
+     * The job description.
+     *
      * @var string
      */
     public $description;
 
     /**
-     * ID of the Job (read-only)
+     * ID of the Job (read-only).
+     *
      * @var int
      */
     public $id;
 
     /**
-     * The job label
+     * The job label.
+     *
      * @var string
      */
     public $label;
 
     /**
-     * Mail notification settings
+     * Mail notification settings.
+     *
      * @var MailNotification
      */
     public $mailNotification;
 
     /**
-     * Set of output formats to produce
+     * Set of output formats to produce.
      *
      * Supported Values:
      *   "PDF", "HTML", "XLS", "RTF", "CSV", "ODT", "TXT", "DOCX", "ODS", "XLSX", "XLS_NOPAG",
@@ -77,27 +82,30 @@ class Job
     public $outputFormats;
 
     /**
-     * Locale for report execution output
+     * Locale for report execution output.
      *
      * Example: "en"
+     *
      * @var string
      */
     public $outputLocale;
 
     /**
-     * Job Source Settings (contains report URI and input control parameters)
+     * Job Source Settings (contains report URI and input control parameters).
+     *
      * @var Source
      */
     public $source;
 
     /**
-     * Job Trigger Settings
+     * Job Trigger Settings.
+     *
      * @var SimpleTrigger|CalendarTrigger
      */
     public $trigger;
 
     /**
-     * Name and Organization of user who created job (read-only)
+     * Name and Organization of user who created job (read-only).
      *
      * Example: "jasperadmin|organization_1"
      *
@@ -106,19 +114,19 @@ class Job
     public $username;
 
     /**
-     * Job object version value. Used for optimistic locking of job object
+     * Job object version value. Used for optimistic locking of job object.
      *
      * @var int
      */
     public $version;
 
     /**
-     * Output Time Zone
+     * Output Time Zone.
      *
      * @var string */
     public $outputTimeZone;
 
-	public function __construct($label = null, $trigger = null, $source = null, $baseOutputFilename = null,
+    public function __construct($label = null, $trigger = null, $source = null, $baseOutputFilename = null,
                                 $outputFormats = null, $repositoryDestination = null)
     {
         $this->label = $label;
@@ -127,23 +135,24 @@ class Job
         $this->baseOutputFilename = $baseOutputFilename;
         $this->outputFormats = $outputFormats;
         $this->repositoryDestination = $repositoryDestination;
-	}
+    }
 
     public function jsonSerialize()
     {
-        $result = array();
+        $result = [];
         foreach (get_object_vars($this) as $k => $v) {
             if (isset($v)) {
                 if (is_object($v)) {
                     $result[$k] = $v->jsonSerialize();
                 // OutputFormats requires a special case because of its hierarchical sublevel "outputFormat"
-                } else if ($k == "outputFormats") {
-                    $result[$k] = array("outputFormat" => $v);
+                } elseif ($k === 'outputFormats') {
+                    $result[$k] = ['outputFormat' => $v];
                 } else {
                     $result[$k] = $v;
                 }
             }
         }
+
         return $result;
     }
 
@@ -154,7 +163,7 @@ class Job
 
     public static function createFromJSON($json_obj)
     {
-        $result = new self();        
+        $result = new self();
 
         // Handle complex and special cases
         // Then remove them from the data array as not to be reprocessed below
@@ -164,15 +173,15 @@ class Job
         }
         if (isset($json_obj->trigger)) {
             $result->trigger = Trigger::createFromJSON($json_obj->trigger);
-            unset ($json_obj->trigger);
+            unset($json_obj->trigger);
         }
         if (isset($json_obj->source)) {
             $result->source = Source::createFromJSON($json_obj->source);
-            unset ($json_obj->source);
+            unset($json_obj->source);
         }
         if (isset($json_obj->outputFormats)) {
             $result->outputFormats = $json_obj->outputFormats->outputFormat;
-            unset ($json_obj->outputFormats);
+            unset($json_obj->outputFormats);
         }
         if (isset($json_obj->repositoryDestination)) {
             $result->repositoryDestination = RepositoryDestination::createFromJSON($json_obj->repositoryDestination);
@@ -190,7 +199,4 @@ class Job
 
         return $result;
     }
-
 }
-
-?>

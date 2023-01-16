@@ -1,9 +1,9 @@
 <?php
+
 namespace Jaspersoft\Dto\Resource;
 
 /**
- * Class MondrianXmlaDefinition
- * @package Jaspersoft\Dto\Resource
+ * Class MondrianXmlaDefinition.
  */
 class MondrianXmlaDefinition extends CompositeResource
 {

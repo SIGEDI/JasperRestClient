@@ -1,9 +1,9 @@
 <?php
+
 namespace Jaspersoft\Dto\Organization;
 
 /**
- * Class Organization
- * @package Jaspersoft\Dto\Organization
+ * Class Organization.
  */
 class Organization
 {
@@ -12,12 +12,14 @@ class Organization
      */
     public $alias;
     /**
-     * Read-only internal ID of organization
+     * Read-only internal ID of organization.
+     *
      * @var string
      */
     public $id;
     /**
-     * Read-only internal ID of parent organization
+     * Read-only internal ID of parent organization.
+     *
      * @var string
      */
     public $parentId;
@@ -46,17 +48,17 @@ class Organization
      */
     public $tenantUri;
 
-	public function __construct(
-		$alias = null,
-		$id = null,
-		$parentId = null,
-		$tenantName = null,
-		$theme = null,
-		$tenantDesc = null,
-		$tenantFolderUri = null,
-		$tenantNote = null,
-		$tenantUri = null)
-	{
+    public function __construct(
+        $alias = null,
+        $id = null,
+        $parentId = null,
+        $tenantName = null,
+        $theme = null,
+        $tenantDesc = null,
+        $tenantFolderUri = null,
+        $tenantNote = null,
+        $tenantUri = null)
+    {
         $this->alias = $alias;
         $this->id = $id;
         $this->parentId = $parentId;
@@ -66,17 +68,17 @@ class Organization
         $this->tenantFolderUri = $tenantFolderUri;
         $this->tenantNote = $tenantNote;
         $this->tenantUri = $tenantUri;
-	}
+    }
 
     public function jsonSerialize()
     {
-        $data = array();
+        $data = [];
         foreach (get_object_vars($this) as $k => $v) {
             if (!empty($v)) {
                 $data[$k] = $v;
             }
         }
+
         return $data;
     }
-
 }

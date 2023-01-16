@@ -1,17 +1,19 @@
 <?php
+
 namespace Jaspersoft\Dto\Job;
 
 class SimpleTrigger extends Trigger
 {
-
     /**
-     * How many times trigger will fire
+     * How many times trigger will fire.
+     *
      * @var int
      */
     public $occurrenceCount;
 
     /**
      * Time interval trigger should fire, unit provided separately.
+     *
      * @var int
      */
     public $recurrenceInterval;
@@ -39,7 +41,7 @@ class SimpleTrigger extends Trigger
         foreach ($json_obj as $k => $v) {
             $result->$k = $v;
         }
+
         return $result;
     }
-
-} 
+}

@@ -1,9 +1,9 @@
 <?php
+
 namespace Jaspersoft\Dto\Resource;
 
 /**
- * Class InputControl
- * @package Jaspersoft\Dto\Resource
+ * Class InputControl.
  */
 class InputControl extends CompositeResource
 {

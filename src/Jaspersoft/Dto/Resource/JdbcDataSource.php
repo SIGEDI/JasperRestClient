@@ -1,9 +1,9 @@
 <?php
+
 namespace Jaspersoft\Dto\Resource;
 
 /**
- * Class JdbcDataSource
- * @package Jaspersoft\Dto\Resource
+ * Class JdbcDataSource.
  */
 class JdbcDataSource extends Resource
 {

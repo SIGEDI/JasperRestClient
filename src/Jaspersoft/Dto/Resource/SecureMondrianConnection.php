@@ -1,9 +1,9 @@
 <?php
+
 namespace Jaspersoft\Dto\Resource;
 
 /**
- * Class SecureMondrianConnection
- * @package Jaspersoft\Dto\Resource
+ * Class SecureMondrianConnection.
  */
 class SecureMondrianConnection extends CompositeResource
 {

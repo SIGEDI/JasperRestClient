@@ -1,11 +1,11 @@
 <?php
+
 namespace Jaspersoft\Service\Criteria;
 
 use Jaspersoft\Tool\Util;
 
 /**
- * Class Criterion
- * @package Jaspersoft\Service\Criteria
+ * Class Criterion.
  */
 class Criterion
 {

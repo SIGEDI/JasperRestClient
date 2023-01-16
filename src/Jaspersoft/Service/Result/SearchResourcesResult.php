@@ -1,17 +1,16 @@
 <?php
+
 namespace Jaspersoft\Service\Result;
 
 use Jaspersoft\Dto\Resource\ResourceLookup;
 
 /**
- * Class SearchResourcesResult
- * @package Jaspersoft\Service\Result
+ * Class SearchResourcesResult.
  */
 class SearchResourcesResult
 {
-
     /**
-     * Items found by search
+     * Items found by search.
      *
      * @var array
      */
@@ -40,11 +39,11 @@ class SearchResourcesResult
     public function createItemsFromData($itemData)
     {
         if ($itemData !== null) {
-            foreach ($itemData->resourceLookup as $rl)
+            foreach ($itemData->resourceLookup as $rl) {
                 $this->items[] = ResourceLookup::createFromJSON($rl);
+            }
         } else {
-            $this->items = array();
+            $this->items = [];
         }
     }
-
 }

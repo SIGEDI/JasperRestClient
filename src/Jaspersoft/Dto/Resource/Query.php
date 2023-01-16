@@ -1,9 +1,9 @@
 <?php
+
 namespace Jaspersoft\Dto\Resource;
 
 /**
- * Class Query
- * @package Jaspersoft\Dto\Resource
+ * Class Query.
  */
 class Query extends CompositeResource
 {

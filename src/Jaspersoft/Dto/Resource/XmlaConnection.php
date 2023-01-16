@@ -1,9 +1,9 @@
 <?php
+
 namespace Jaspersoft\Dto\Resource;
 
 /**
- * Class XmlaConnection
- * @package Jaspersoft\Dto\Resource
+ * Class XmlaConnection.
  */
 class XmlaConnection extends Resource
 {

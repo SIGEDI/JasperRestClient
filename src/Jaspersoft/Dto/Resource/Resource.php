@@ -1,9 +1,9 @@
 <?php
+
 namespace Jaspersoft\Dto\Resource;
 
 /**
- * Class Resource
- * @package Jaspersoft\Dto\Resource
+ * Class Resource.
  */
 class Resource
 {
@@ -17,9 +17,11 @@ class Resource
 
     public static function createFromJSON($json_data, $type = null)
     {
-        $result = (empty($type)) ? new self : new $type();
-        foreach($json_data as $k => $v)
+        $result = (empty($type)) ? new self() : new $type();
+        foreach ($json_data as $k => $v) {
             $result->$k = $v;
+        }
+
         return $result;
     }
 
@@ -30,22 +32,25 @@ class Resource
 
     public function jsonSerialize()
     {
-        $result = array();
-        foreach (get_object_vars($this) as $k => $v)
-            if (isset($v))
+        $result = [];
+        foreach (get_object_vars($this) as $k => $v) {
+            if (isset($v)) {
                 $result[$k] = $v;
+            }
+        }
+
         return $result;
     }
 
     public function __construct()
     {
-
     }
 
     public function name()
     {
         $type = explode('\\', get_class($this));
         $type = lcfirst(end($type));
+
         return $type;
     }
 
@@ -53,11 +58,12 @@ class Resource
     {
         $type = explode('\\', get_called_class());
         $type = lcfirst(end($type));
+
         return $type;
     }
 
     public function contentType()
     {
-        return "application/repository.".$this->name()."+json";
+        return 'application/repository.'.$this->name().'+json';
     }
 }

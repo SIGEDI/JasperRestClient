@@ -1,9 +1,9 @@
 <?php
+
 namespace Jaspersoft\Dto\Resource;
 
 /**
- * Class MondrianConnection
- * @package Jaspersoft\Dto\Resource
+ * Class MondrianConnection.
  */
 class MondrianConnection extends CompositeResource
 {

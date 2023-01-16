@@ -1,4 +1,5 @@
 <?php
+
 namespace Jaspersoft\Dto\ReportExecution;
 
 /**
@@ -6,11 +7,9 @@ namespace Jaspersoft\Dto\ReportExecution;
  * This class is NOT currently being utilized, but is in place for future implementation of ReportExecutions service.
  *
  * Class Execution
- * @package Jaspersoft\Dto\ReportExecution
  */
 class Execution
 {
-
     public $status;
     public $totalPages;
     public $currentPage;
@@ -23,10 +22,10 @@ class Execution
     {
         $data = json_decode($json_data, true);
         $result = new self();
-        foreach ($data as $k => $v)
+        foreach ($data as $k => $v) {
             $result->$k = $v;
+        }
+
         return $result;
     }
-
-
 }

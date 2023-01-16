@@ -1,32 +1,30 @@
 <?php
+
 namespace Jaspersoft\Dto\Job;
 
 /**
- * Class Trigger
+ * Class Trigger.
  *
  * Contains attributes shared among both SimpleTrigger and CalendarTrigger
- *
- * @package Jaspersoft\Dto\Job
  */
 abstract class Trigger
 {
-
     /**
-     * Read-only value of server-declared ID
+     * Read-only value of server-declared ID.
      *
      * @var int
      */
     public $id;
 
     /**
-     * Read-only value used for optimistic locking
+     * Read-only value used for optimistic locking.
      *
      * @var int
      */
     public $version;
 
     /**
-     * Timezone of the job to trigger
+     * Timezone of the job to trigger.
      *
      * Example: "America/Los_Angeles"
      *
@@ -35,7 +33,7 @@ abstract class Trigger
     public $timezone;
 
     /**
-     * Name of the calendar to follow
+     * Name of the calendar to follow.
      *
      * Example: "someExistingCalendarName"
      *
@@ -44,7 +42,7 @@ abstract class Trigger
     public $calendarName;
 
     /**
-     * Start type for trigger
+     * Start type for trigger.
      *
      * Supported Values:
      *   1 - Job should be scheduled immediately
@@ -106,30 +104,31 @@ abstract class Trigger
     {
         $type = explode('\\', get_class($this));
         $type = lcfirst(end($type));
+
         return $type;
     }
 
     public function jsonSerialize()
     {
-        $result = array();
-        foreach (get_object_vars($this) as $k => $v)
-            if (isset($v))
+        $result = [];
+        foreach (get_object_vars($this) as $k => $v) {
+            if (isset($v)) {
                 $result[$k] = $v;
-        return array($this->name() => $result);
+            }
+        }
+
+        return [$this->name() => $result];
     }
 
     public static function createFromJSON($json_obj)
     {
         if (isset($json_obj->simpleTrigger)) {
             return SimpleTrigger::createFromJSON($json_obj->simpleTrigger);
-        }
-        else if (isset($json_obj->calendarTrigger)) {
+        } elseif (isset($json_obj->calendarTrigger)) {
             return CalendarTrigger::createFromJSON($json_obj->calendarTrigger);
         }
-        else {
-            //TODO: add proper exception handling
-            return null;
-        }
-    }
 
-} 
+        // TODO: add proper exception handling
+        return null;
+    }
+}

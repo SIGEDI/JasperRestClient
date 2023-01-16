@@ -1,17 +1,15 @@
 <?php
+
 namespace Jaspersoft\Dto\ImportExport;
 
 /**
  * Class TaskState
- * Describes the state of an import or export task that has been executed
- *
- * @package Jaspersoft\Dto\ImportExport
+ * Describes the state of an import or export task that has been executed.
  */
 class TaskState
 {
-
     /**
-     * ID for the task (read-only)
+     * ID for the task (read-only).
      *
      * @var int
      */
@@ -21,7 +19,7 @@ class TaskState
      * Current phase of the task (read-only)
      *          'inprogress' - The task is currently being executed
      *          'finished' - The task has completed.
-     *          'failed' - The task has failed to complete
+     *          'failed' - The task has failed to complete.
      *
      * @var string
      */
@@ -45,5 +43,4 @@ class TaskState
     {
         return new self($json_obj->id, $json_obj->phase, $json_obj->message);
     }
-
 }

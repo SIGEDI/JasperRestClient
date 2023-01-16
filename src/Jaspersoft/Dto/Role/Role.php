@@ -1,39 +1,41 @@
 <?php
+
 namespace Jaspersoft\Dto\Role;
 
 /**
- * Class Role
- * @package Jaspersoft\Dto\Role
+ * Class Role.
  */
 class Role
 {
     /**
-     * Role name
+     * Role name.
+     *
      * @var string
      */
     public $name;
     /**
-     * Organization name role may belong to
+     * Organization name role may belong to.
+     *
      * @var string
      */
     public $tenantId;
     /**
-     * @var boolean
+     * @var bool
      */
     public $externallyDefined;
 
-	public function __construct($name = null, $tenantId = null, $externallyDefined = null)
-	{
+    public function __construct($name = null, $tenantId = null, $externallyDefined = null)
+    {
         $this->name = $name;
         $this->externallyDefined = $externallyDefined;
         $this->tenantId = $tenantId;
-	}
+    }
 
     public function jsonSerialize()
     {
-        return array(
+        return [
             'name' => $this->name,
-            'externallyDefined' => $this->externallyDefined
-        );
+            'externallyDefined' => $this->externallyDefined,
+        ];
     }
 }

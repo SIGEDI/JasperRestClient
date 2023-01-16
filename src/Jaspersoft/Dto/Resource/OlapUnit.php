@@ -1,9 +1,9 @@
 <?php
+
 namespace Jaspersoft\Dto\Resource;
 
 /**
- * Class OlapUnit
- * @package Jaspersoft\Dto\Resource
+ * Class OlapUnit.
  */
 class OlapUnit extends CompositeResource
 {

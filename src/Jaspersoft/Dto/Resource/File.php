@@ -1,9 +1,9 @@
 <?php
+
 namespace Jaspersoft\Dto\Resource;
 
 /**
- * Class File
- * @package Jaspersoft\Dto\Resource
+ * Class File.
  */
 class File extends Resource
 {

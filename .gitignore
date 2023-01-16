@@ -1,4 +1,4 @@
 *~
 .idea/**
-vendot/**
-composer.json
+vendor/**
+composer.lock

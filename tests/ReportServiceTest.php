@@ -29,7 +29,7 @@ class ReportServiceTest extends BaseTest
     public function testRunReportGetsSomewhatProperFileSize()
     {
         $data = $this->rs->runReport($this->sample_report, 'pdf');
-        $this->assertGreaterThan($this->sample_report_size, strlen($data));
+        $this->assertGreaterThan($this->sample_report_size, mb_strlen($data));
     }
 
     /**

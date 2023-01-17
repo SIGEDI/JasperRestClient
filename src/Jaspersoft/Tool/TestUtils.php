@@ -20,7 +20,7 @@ class TestUtils
 
     public static function makeID()
     {
-        return substr(md5(microtime()), 0, 5);
+        return mb_substr(md5(microtime()), 0, 5);
     }
 
     public static function createJob(Folder $f)

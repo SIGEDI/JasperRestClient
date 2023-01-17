@@ -85,7 +85,7 @@ class RESTRequest
         $this->setAuth($ch);
         $this->setTimeout($ch);
         try {
-            switch (strtoupper($this->verb)) {
+            switch (mb_strtoupper($this->verb)) {
                 case 'GET':
                     $this->executeGet($ch);
                     break;
@@ -229,11 +229,11 @@ class RESTRequest
         $response = preg_replace("/^(?:HTTP\/1.1 100.*?\\r\\n\\r\\n)+/ms", '', $response);
 
         //  100-continue chunks are returned on multipart communications
-        $headerblock = strstr($response, "\r\n\r\n", true);
+        $headerblock = mb_strstr($response, "\r\n\r\n", true);
 
         // strstr returns the matched characters and following characters, but we want to discard of "\r\n\r\n", so
         // we delete the first 4 bytes of the returned string.
-        $this->response_body = substr(strstr($response, "\r\n\r\n"), 4);
+        $this->response_body = mb_substr(mb_strstr($response, "\r\n\r\n"), 4);
         // headers are always separated by \n until the end of the header block which is separated by \r\n\r\n.
         $this->response_headers = explode("\r\n", $headerblock);
 

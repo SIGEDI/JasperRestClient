@@ -44,7 +44,7 @@ class ImportExportServiceTest extends BaseTest
         $this->assertSame('Jaspersoft\\Dto\\ImportExport\\TaskState', get_class($state));
         $this->assertSame('finished', $state->phase);
         $data = $this->ies->fetchExport($metadata->id);
-        $this->assertTrue(strlen($data) > 100);
+        $this->assertTrue(mb_strlen($data) > 100);
         unset($data);
     }
 

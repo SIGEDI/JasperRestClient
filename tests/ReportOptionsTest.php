@@ -27,7 +27,7 @@ class ReportOptionsTest extends BaseTest
      */
     public function testCreateOptionsCreatesNewOptions()
     {
-        $timecode = substr(md5(microtime()), 0, 5);
+        $timecode = mb_substr(md5(microtime()), 0, 5);
         $label = 'test'.$timecode;
         $controlOptions = ['Country_multi_select' => ['USA']];
         $this->os->updateReportOptions($this->report_uri, $controlOptions, $label, 'true');

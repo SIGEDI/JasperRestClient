@@ -19,9 +19,6 @@ class RESTRequest
     protected $file_to_upload = [];
     protected $headers;
     protected $curl_timeout;
-    /**
-     * @var false|string[]
-     */
     private $response_headers;
 
     public function __construct($url = null, $verb = 'GET', $request_body = null)
@@ -377,7 +374,7 @@ class RESTRequest
     /**
      * @throws RESTRequestException
      */
-    public function handleError($statusCode, $expectedCodes, $responseBody): void
+    public function handleError($statusCode, $expectedCodes, $responseBody)
     {
         if (!empty($responseBody)) {
             $errorData = json_decode($responseBody);
@@ -412,8 +409,10 @@ class RESTRequest
         $contentType = 'application/json',
         $acceptType = 'application/json',
         $headers = []
-    ): array {
-        $info = $this->processReset($url, $verb, $reqBody, $contentType, $acceptType, $headers);
+    ): array
+    {
+        $this->performReset($url, $verb, $reqBody);
+        $info = $this->getResponseInfo();
         $statusCode = $info['http_code'];
         $body = $this->getResponseBody();
 
@@ -429,6 +428,8 @@ class RESTRequest
 
     /**
      * @throws RESTRequestException
+     *
+     * @return true|null
      */
     public function prepAndSend(
         $url,
@@ -439,8 +440,9 @@ class RESTRequest
         $contentType = 'application/json',
         $acceptType = 'application/json',
         $headers = []
-    ): ?bool {
-        $statusCode = $this->processReset($url, $verb, $reqBody, $contentType, $acceptType, $headers);
+    ) {
+        $this->performReset($url, $verb, $reqBody);
+        $statusCode = $this->getResponseInfo();
         $responseBody = $this->getResponseBody();
         $statusCode = $statusCode['http_code'];
 
@@ -448,7 +450,7 @@ class RESTRequest
             $this->handleError($statusCode, $expectedCodes, $responseBody);
         }
 
-        if ($returnData === true) {
+        if ($returnData) {
             return $this->getResponseBody();
         }
 
@@ -466,6 +468,8 @@ class RESTRequest
      * @param array|null  $file         - An array with the URI string representing the image, and the filepath to the image. (i.e: array('/images/JRLogo', '/home/user/jasper.jpg') )
      * @param bool        $returnData   - whether you wish to receive the data returned by the server or not
      *
+     * @throws \Exception
+     *
      * @return array - Returns an array with the response info and the response body, since the server sends a 100 request, it is hard to validate the success of the request
      */
     public function multipartRequestSend(
@@ -476,16 +480,7 @@ class RESTRequest
         array $file = null,
         bool $returnData = false
     ): array {
-        $this->flush();
-        $this->setUrl($url);
-        $this->setVerb($verb);
-        if (!empty($reqBody)) {
-            $this->buildPostBody($reqBody);
-        }
-        if (!empty($file)) {
-            $this->setFileToUpload($file);
-        }
-        $this->execute();
+        $this->performReset($url, $verb, $reqBody);
         $response = $this->getResponseInfo();
         $responseBody = $this->getResponseBody();
         $statusCode = $response['http_code'];
@@ -495,8 +490,6 @@ class RESTRequest
 
     /**
      * @throws RESTRequestException
-     *
-     * @return null
      */
     public function sendBinary($url, $expectedCodes, $body, $contentType, $contentDisposition, $contentDescription, $verb = 'POST')
     {
@@ -505,7 +498,12 @@ class RESTRequest
         $this->setVerb($verb.'_BIN');
         $this->buildPostBody($body);
         $this->setContentType($contentType);
-        $this->headers = ['Content-Type: '.$contentType, 'Content-Disposition: '.$contentDisposition, 'Content-Description: '.$contentDescription, 'Accept: application/json'];
+        $this->headers = [
+            'Content-Type: '.$contentType,
+            'Content-Disposition: '.$contentDisposition,
+            'Content-Description: '.$contentDescription,
+            'Accept: application/json',
+        ];
 
         $this->execute();
 
@@ -520,10 +518,7 @@ class RESTRequest
         return $this->getResponseBody();
     }
 
-    /**
-     * @return null
-     */
-    public function processReset($url, $verb, $reqBody, $contentType, $acceptType, $headers)
+    private function performReset($url, $verb, $reqBody): void
     {
         $this->flush();
         $this->setUrl($url);
@@ -544,7 +539,5 @@ class RESTRequest
         }
 
         $this->execute();
-
-        return $this->getResponseInfo();
     }
 }

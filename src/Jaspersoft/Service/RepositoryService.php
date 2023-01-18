@@ -6,6 +6,7 @@ use Jaspersoft\Client\Client;
 use Jaspersoft\Dto\Resource\File;
 use Jaspersoft\Dto\Resource\Resource;
 use Jaspersoft\Exception\ResourceServiceException;
+use Jaspersoft\Exception\RESTRequestException;
 use Jaspersoft\Service\Criteria\RepositorySearchCriteria;
 use Jaspersoft\Service\Result\SearchResourcesResult;
 use Jaspersoft\Tool\MimeMapper;
@@ -24,7 +25,7 @@ class RepositoryService
     private $service;
     private $base_url;
 
-    public function __construct(Client &$client)
+    public function __construct(Client $client)
     {
         $this->service = $client->getService();
         $this->base_url = $client->getURL();
@@ -47,6 +48,8 @@ class RepositoryService
 
     /**
      * Search repository by criteria.
+     *
+     * @throws RESTRequestException
      */
     public function searchResources(RepositorySearchCriteria $criteria = null): SearchResourcesResult
     {
@@ -91,6 +94,8 @@ class RepositoryService
      * Get resource by URI.
      *
      * @param bool $expanded Return sub resources as definitions and not references?
+     *
+     * @throws RESTRequestException
      */
     public function getResource(string $uri, bool $expanded = false): Resource
     {
@@ -115,9 +120,9 @@ class RepositoryService
     /**
      * Obtain the raw binary data of a file resource stored on the server (e.x: image).
      *
-     * @return string
+     * @throws RESTRequestException
      */
-    public function getBinaryFileData(File $file)
+    public function getBinaryFileData(File $file): string
     {
         $url = self::makeUrl(null, $file->uri);
         $data = $this->service->prepAndSend($url, [200, 204], 'GET', null, true, 'application/json', 'application/'.$file->type);
@@ -163,6 +168,8 @@ class RepositoryService
      *
      * @param resource $resource  Resource object fully describing updated resource
      * @param bool     $overwrite Replace existing resource even if type differs?
+     *
+     * @throws RESTRequestException
      */
     public function updateResource(Resource $resource, bool $overwrite = false): Resource
     {
@@ -183,6 +190,8 @@ class RepositoryService
      *
      * @param File   $resource   A resource descriptor for the File
      * @param string $binaryData The binary data of the file to update
+     *
+     * @throws RESTRequestException
      */
     public function updateFileResource(File $resource, string $binaryData): Resource
     {
@@ -201,6 +210,8 @@ class RepositoryService
      * to the \Jaspersoft\Tool\MimeMapper mimeMap.
      *
      * @param string $parentFolder string The folder to place the file in
+     *
+     * @throws RESTRequestException
      */
     public function createFileResource(File $resource, string $binaryData, string $parentFolder, bool $createFolders = true): File
     {
@@ -220,6 +231,8 @@ class RepositoryService
      * @param string $destinationFolderUri URI of folder the resource is to be copied to
      * @param bool   $createFolders        Should folders be created if they do not already exist?
      * @param bool   $overwrite            Should files be overwritten while performing this operation?
+     *
+     * @throws RESTRequestException
      */
     public function copyResource(string $resourceUri, string $destinationFolderUri, bool $createFolders = true, bool $overwrite = false): Resource
     {
@@ -238,6 +251,8 @@ class RepositoryService
      * @param string $destinationFolderUri URI of folder the resource is to be copied to
      * @param bool   $createFolders        Should folders be created if they do not already exist?
      * @param bool   $overwrite            Should files be overwritten while performing this operation?
+     *
+     * @throws RESTRequestException
      */
     public function moveResource(string $resourceUri, string $destinationFolderUri, bool $createFolders = true, bool $overwrite = false): Resource
     {
@@ -253,6 +268,8 @@ class RepositoryService
      * Remove resource(s) from the repository.
      *
      * @param string|array $uris URI(s) of resources to remove
+     *
+     * @throws RESTRequestException
      */
     public function deleteResources($uris): void
     {

@@ -39,7 +39,7 @@ class TaskState
         $this->message = $message;
     }
 
-    public static function createFromJSON($json_obj)
+    public static function createFromJSON($json_obj): TaskState
     {
         return new self($json_obj->id, $json_obj->phase, $json_obj->message);
     }

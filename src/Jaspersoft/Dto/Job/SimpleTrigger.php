@@ -35,7 +35,7 @@ class SimpleTrigger extends Trigger
         $this->recurrenceIntervalUnit = $recurrenceIntervalUnit;
     }
 
-    public static function createFromJSON($json_obj)
+    public static function createFromJSON($json_obj): SimpleTrigger
     {
         $result = new self();
         foreach ($json_obj as $k => $v) {

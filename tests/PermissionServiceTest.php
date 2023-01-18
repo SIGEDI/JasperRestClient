@@ -11,7 +11,7 @@ class PermissionServiceTest extends BaseTest
     protected $jcSuper;
     protected $newUser;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -30,10 +30,14 @@ class PermissionServiceTest extends BaseTest
         $this->us = $this->jc->userService();
         $this->super_ps = $this->jcSuper->permissionService();
 
-        $this->testPermission = new RepositoryPermission($this->testFolder->uri, 'user:/'.$this->testUser->tenantId.'/'.$this->testUser->username, '32');
+        $this->testPermission = new RepositoryPermission(
+            $this->testFolder->uri,
+            'user:/'.$this->testUser->tenantId.'/'.$this->testUser->username,
+            '32'
+        );
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->jc->repositoryService()->deleteResources($this->testFolder->uri);
@@ -41,14 +45,14 @@ class PermissionServiceTest extends BaseTest
     }
 
     /** Coverage: createRepositoryPermission */
-    public function testCreateSinglePermission()
+    public function testCreateSinglePermission(): void
     {
         $perm = $this->ps->createRepositoryPermission($this->testPermission);
         $this->assertSame($this->testPermission, $perm);
     }
 
     /** Coverage: createRepositoryPermissions, searchRepositoryPermissions **/
-    public function testCreateAndGetPermissions()
+    public function testCreateAndGetPermissions(): void
     {
         $this->ps->createRepositoryPermissions([$this->testPermission]);
         $search = $this->ps->searchRepositoryPermissions($this->testFolder->uri);
@@ -57,7 +61,7 @@ class PermissionServiceTest extends BaseTest
     }
 
     /** Coverage: create, search, updateRepositoryPermissions **/
-    public function testUpdatePermission()
+    public function testUpdatePermission(): void
     {
         self::testCreateAndGetPermissions();
         $this->testPermission->mask = 1;
@@ -68,7 +72,7 @@ class PermissionServiceTest extends BaseTest
     }
 
     /** Coverage: create, search, deleteRepositoryPermissions **/
-    public function testDeletePermission()
+    public function testDeletePermission(): void
     {
         self::testCreateAndGetPermissions();
         $this->ps->deleteRepositoryPermission($this->testPermission);

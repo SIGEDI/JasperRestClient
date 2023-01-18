@@ -109,10 +109,8 @@ class MailNotification
 
     /**
      * Create an associative array of the data which is set to a non-null value.
-     *
-     * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $result = [];
         foreach (get_object_vars($this) as $k => $v) {
@@ -139,10 +137,8 @@ class MailNotification
      * and casts it as a MailNotification Object.
      *
      * @param \stdClass $json_obj
-     *
-     * @return MailNotification
      */
-    public static function createFromJSON($json_obj)
+    public static function createFromJSON($json_obj): MailNotification
     {
         $result = new self();
         foreach ($json_obj as $k => $v) {

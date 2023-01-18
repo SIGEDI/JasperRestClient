@@ -18,12 +18,12 @@ class TestUtils
      * These are good examples for the minimum required values when creating objects to use with the server.
      */
 
-    public static function makeID()
+    public static function makeID(): string
     {
         return mb_substr(md5(microtime()), 0, 5);
     }
 
-    public static function createJob(Folder $f)
+    public static function createJob(Folder $f): Job
     {
         // SimpleTrigger
         $trigger = new SimpleTrigger();
@@ -35,22 +35,30 @@ class TestUtils
         // Source
         $source = new Source();
         $source->reportUnitURI = '/adhoc/topics/Cascading_multi_select_topic';
-        $source->parameters = ['Country_multi_select' => ['Mexico'],
-                                    'Country_name_single_select' => ['Chin-Lovell Engineering Associates'],
-                                    'Country_state_multi_select' => ['DF', 'Jalisco', 'Mexico']];
+        $source->parameters = [
+            'Country_multi_select' => ['Mexico'],
+            'Country_name_single_select' => ['Chin-Lovell Engineering Associates'],
+            'Country_state_multi_select' => ['DF', 'Jalisco', 'Mexico'],
+        ];
 
         // Repository Destination
         $repoDest = new RepositoryDestination();
         $repoDest->folderURI = $f->uri;
 
-        $job = new Job('Sample Job Name', $trigger, $source, 'Cascading_multi_select_test',
-            ['PDF', 'XLS'], $repoDest);
+        $job = new Job(
+            'Sample Job Name',
+            $trigger,
+            $source,
+            'Cascading_multi_select_test',
+            ['PDF', 'XLS'],
+            $repoDest
+        );
         $job->description = 'Sample Description';
 
         return $job;
     }
 
-    public static function createFolder()
+    public static function createFolder(): Folder
     {
         $uuid = self::makeID();
         $entity = new Folder();
@@ -61,17 +69,17 @@ class TestUtils
         return $entity;
     }
 
-    public static function createUser()
+    public static function createUser(): User
     {
-        $timecode = self::makeID();
+        $timeCode = self::makeID();
 
         $role = new Role('ROLE_USER', null, 'false');
 
         $result = new User();
-        $result->username = 'test_'.$timecode;
-        $result->password = $timecode;
-        $result->emailAddress = 'test@'.$timecode.'.com';
-        $result->fullName = 'User '.$timecode;
+        $result->username = 'test_'.$timeCode;
+        $result->password = $timeCode;
+        $result->emailAddress = 'test@'.$timeCode.'.com';
+        $result->fullName = 'User '.$timeCode;
         $result->tenantId = 'organization_1';
         $result->enabled = 'true';
         $result->externallyDefined = 'false';
@@ -80,7 +88,7 @@ class TestUtils
         return $result;
     }
 
-    public static function createImage(Folder $f)
+    public static function createImage(Folder $f): File
     {
         $uuid = self::makeID();
         $entity = new File();

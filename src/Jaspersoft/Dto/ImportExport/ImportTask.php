@@ -37,7 +37,7 @@ class ImportTask
      */
     public $brokenDependencies;
 
-    public function queryData()
+    public function queryData(): array
     {
         $data = [];
         foreach (get_object_vars($this) as $k => $v) {

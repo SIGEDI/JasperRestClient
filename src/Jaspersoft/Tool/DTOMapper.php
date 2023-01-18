@@ -24,6 +24,9 @@ abstract class DTOMapper
         'reportOptions' => ['reportParameters' => ['name', 'value']],
     ];
 
+    /**
+     * @throws ResourceServiceException
+     */
     public static function collectionKeyValuePair($class, $field)
     {
         if (array_key_exists($field, static::$collectionKeyValue[$class])) {
@@ -32,6 +35,9 @@ abstract class DTOMapper
         throw new ResourceServiceException('Unable to determine collection unique key');
     }
 
+    /**
+     * @throws ResourceServiceException
+     */
     public static function collectionKey($class, $field)
     {
         if (array_key_exists($field, static::$collectionKeyValue[$class])) {
@@ -40,17 +46,20 @@ abstract class DTOMapper
         throw new ResourceServiceException('Unable to determine collection unique key');
     }
 
-    public static function isCollectionField($field, $class)
+    public static function isCollectionField($field, $class): bool
     {
         return (isset(static::$collectionKeyValue[$class])) and array_key_exists($field, static::$collectionKeyValue[$class]);
     }
 
-    public static function collectionFields($class)
+    public static function collectionFields($class): array
     {
         return array_keys(static::$collectionKeyValue[$class]);
     }
 
-    public static function mapCollection($indexed_array, $class, $field)
+    /**
+     * @throws ResourceServiceException
+     */
+    public static function mapCollection($indexed_array, $class, $field): array
     {
         // To be used with a createFromJSON method
         $pair = self::collectionKeyValuePair($class, $field);
@@ -63,7 +72,10 @@ abstract class DTOMapper
         return $mapped_array;
     }
 
-    public static function unmapCollection($associative_array, $class, $field)
+    /**
+     * @throws ResourceServiceException
+     */
+    public static function unmapCollection($associative_array, $class, $field): array
     {
         // To be used with jsonSerialize method
         $pair = self::collectionKeyValuePair($class, $field);

@@ -8,7 +8,7 @@ class ReportOptionsTest extends BaseTest
     protected $report_uri;
     protected $testSuccess;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->os = $this->jc->optionsService();
@@ -16,7 +16,7 @@ class ReportOptionsTest extends BaseTest
         $this->testSuccess = false;
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->testSuccess = false;
@@ -25,10 +25,10 @@ class ReportOptionsTest extends BaseTest
     /**
      * Does a non-strict sanity check on ReportOptions service.
      */
-    public function testCreateOptionsCreatesNewOptions()
+    public function testCreateOptionsCreatesNewOptions(): void
     {
-        $timecode = mb_substr(md5(microtime()), 0, 5);
-        $label = 'test'.$timecode;
+        $timeCode = mb_substr(md5(microtime()), 0, 5);
+        $label = 'test'.$timeCode;
         $controlOptions = ['Country_multi_select' => ['USA']];
         $this->os->updateReportOptions($this->report_uri, $controlOptions, $label, 'true');
         $options = $this->os->getReportOptions($this->report_uri);

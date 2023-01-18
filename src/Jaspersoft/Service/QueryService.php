@@ -20,13 +20,8 @@ class QueryService
 
     /**
      * This function will execute a query on a data source or domain, and return the results of such query.
-     *
-     * @param string $sourceUri
-     * @param string $query
-     *
-     * @return array
      */
-    public function executeQuery($sourceUri, $query)
+    public function executeQuery(string $sourceUri, string $query): array
     {
         $url = $this->restUrl2.'/queryExecutor'.$sourceUri;
         $data = $this->service->prepAndSend($url, [200], 'POST', $query, true, 'text/plain', 'application/json');

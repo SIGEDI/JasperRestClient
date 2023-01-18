@@ -137,14 +137,14 @@ class Job
         $this->repositoryDestination = $repositoryDestination;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $result = [];
         foreach (get_object_vars($this) as $k => $v) {
             if (isset($v)) {
                 if (is_object($v)) {
                     $result[$k] = $v->jsonSerialize();
-                // OutputFormats requires a special case because of its hierarchical sublevel "outputFormat"
+                // OutputFormats requires a special case because of its hierarchical sub level "outputFormat"
                 } elseif ($k === 'outputFormats') {
                     $result[$k] = ['outputFormat' => $v];
                 } else {
@@ -161,7 +161,7 @@ class Job
         return json_encode($this->jsonSerialize());
     }
 
-    public static function createFromJSON($json_obj)
+    public static function createFromJSON($json_obj): Job
     {
         $result = new self();
 

@@ -20,7 +20,7 @@ class ResourceLookup
     {
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $data = [];
         foreach (get_object_vars($this) as $k => $v) {
@@ -32,7 +32,7 @@ class ResourceLookup
         return $data;
     }
 
-    public static function createFromJSON($json_data)
+    public static function createFromJSON($json_data): ResourceLookup
     {
         $temp = new self();
         foreach ($json_data as $k => $v) {

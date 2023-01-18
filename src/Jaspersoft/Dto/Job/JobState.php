@@ -36,7 +36,7 @@ class JobState
         $this->value = $value;
     }
 
-    public static function createFromJSON($json_obj)
+    public static function createFromJSON($json_obj): JobState
     {
         if (!isset($json_obj->previousFireTime)) {
             $json_obj->previousFireTime = null;

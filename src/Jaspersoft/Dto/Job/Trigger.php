@@ -100,7 +100,7 @@ abstract class Trigger
      */
     public $misfireInstruction;
 
-    public function name()
+    public function name(): string
     {
         $type = explode('\\', get_class($this));
         $type = lcfirst(end($type));
@@ -108,7 +108,7 @@ abstract class Trigger
         return $type;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $result = [];
         foreach (get_object_vars($this) as $k => $v) {

@@ -100,7 +100,7 @@ class RepositoryDestination
      */
     public $outputFTPInfo;
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $result = [];
         foreach (get_object_vars($this) as $k => $v) {
@@ -116,7 +116,7 @@ class RepositoryDestination
         return $result;
     }
 
-    public static function createFromJSON($json_obj)
+    public static function createFromJSON($json_obj): RepositoryDestination
     {
         $result = new self();
         if (isset($json_obj->outputFTPInfo)) {

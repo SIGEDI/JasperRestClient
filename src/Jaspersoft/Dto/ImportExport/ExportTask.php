@@ -40,7 +40,7 @@ class ExportTask
      */
     public $parameters = [];
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $data = [];
         foreach (get_object_vars($this) as $k => $v) {

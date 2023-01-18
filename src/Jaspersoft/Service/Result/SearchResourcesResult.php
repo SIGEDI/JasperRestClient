@@ -36,7 +36,7 @@ class SearchResourcesResult
         $this->totalCount = $totalCount;
     }
 
-    public function createItemsFromData($itemData)
+    public function createItemsFromData($itemData): void
     {
         if ($itemData !== null) {
             foreach ($itemData->resourceLookup as $rl) {

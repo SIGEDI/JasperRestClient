@@ -5,8 +5,9 @@ use Jaspersoft\Client\Client as c;
 class BaseTest extends \PHPUnit_Framework_TestCase
 {
     public $bootstrap;
+    private $jcSuper;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->bootstrap = parse_ini_file(dirname(__FILE__).'/test.properties');
         $this->jc = new c(
@@ -17,11 +18,11 @@ class BaseTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
     }
 
-    public function createSuperClient()
+    public function createSuperClient(): void
     {
         $this->jcSuper = new c(
             $this->bootstrap['hostname'],

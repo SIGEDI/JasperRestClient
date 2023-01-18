@@ -9,12 +9,12 @@ use Jaspersoft\Tool\Util;
  */
 class Criterion
 {
-    public function toArray()
+    public function toArray(): array
     {
         return get_object_vars($this);
     }
 
-    public function toQueryParams()
+    public function toQueryParams(): string
     {
         return Util::query_suffix($this->toArray());
     }

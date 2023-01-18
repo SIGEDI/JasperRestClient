@@ -3,14 +3,14 @@
 require_once 'BaseTest.php';
 use Jaspersoft\Dto\Organization\Organization;
 
-class JasperOrganizationServiceTest extends BaseTest
+class OrganizationServiceTest extends BaseTest
 {
     protected $jc;
     protected $os;
     protected $testOrg;
     protected $subOrg;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -33,7 +33,7 @@ class JasperOrganizationServiceTest extends BaseTest
         $this->os->createOrganization($this->subOrg);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->os->deleteOrganization($this->subOrg);
@@ -42,13 +42,13 @@ class JasperOrganizationServiceTest extends BaseTest
 
     /* Tests below */
 
-    public function testPutGetOrganizationWithoutSubOrganizationFlag()
+    public function testPutGetOrganizationWithoutSubOrganizationFlag(): void
     {
         $result = $this->os->getOrganization($this->testOrg->id);
         $this->assertSame($result->id, $this->testOrg->id);
     }
 
-    public function testUpdateOrganizationChangesOrganizationData()
+    public function testUpdateOrganizationChangesOrganizationData(): void
     {
         $this->testOrg->tenantDesc = 'TEST_TEST';
         $this->os->updateOrganization($this->testOrg);
@@ -57,7 +57,7 @@ class JasperOrganizationServiceTest extends BaseTest
         $this->assertSame($actual->tenantDesc, 'TEST_TEST');
     }
 
-    public function testSearchOrganization()
+    public function testSearchOrganization(): void
     {
         $search = $this->os->searchOrganizations($this->testOrg->id);
         $this->assertTrue(sizeof($search) > 0);

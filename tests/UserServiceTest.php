@@ -10,7 +10,7 @@ class UserServiceTest extends BaseTest
     protected $newUser;
     protected $us;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->newUser = u::createUser();
@@ -18,19 +18,19 @@ class UserServiceTest extends BaseTest
         $this->us->addOrUpdateUser($this->newUser);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->us->deleteUser($this->newUser);
     }
 
-    public function testGetUserGetsCorrectUser()
+    public function testGetUserGetsCorrectUser(): void
     {
         $actual = $this->us->getUser($this->newUser->username, $this->newUser->tenantId);
         $this->assertSame($this->newUser->fullName, $actual->fullName);
     }
 
-    public function testUpdateChangesUser()
+    public function testUpdateChangesUser(): void
     {
         $this->newUser->emailAddress = 'test@test.test';
         $this->us->addOrUpdateUser($this->newUser);
@@ -39,14 +39,14 @@ class UserServiceTest extends BaseTest
         $this->assertSame('test@test.test', $actual->emailAddress);
     }
 
-    public function testSearchUserReturnsAUser()
+    public function testSearchUserReturnsAUser(): void
     {
         $result = $this->us->searchUsers($this->newUser->username);
         $this->assertTrue(sizeof($result) > 0);
         $this->assertTrue($result[0] instanceof UserLookup);
     }
 
-    public function testGetUserByLookupReturnsCorrectUser()
+    public function testGetUserByLookupReturnsCorrectUser(): void
     {
         $result = $this->us->searchUsers($this->newUser->username);
         $user = $this->us->getUserByLookup($result[0]);

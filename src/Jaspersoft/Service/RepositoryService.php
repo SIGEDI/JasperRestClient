@@ -30,7 +30,7 @@ class RepositoryService
         $this->base_url = $client->getURL();
     }
 
-    private function makeUrl(RepositorySearchCriteria $criteria = null, $uri = null, $expanded = null)
+    private function makeUrl(RepositorySearchCriteria $criteria = null, $uri = null, $expanded = null): string
     {
         $result = $this->base_url.'/resources';
         if (!empty($criteria)) {
@@ -47,15 +47,11 @@ class RepositoryService
 
     /**
      * Search repository by criteria.
-     *
-     * @param \Jaspersoft\Service\Criteria\RepositorySearchCriteria $criteria
-     *
-     * @return \Jaspersoft\Service\Result\SearchResourcesResult
      */
-    public function searchResources(RepositorySearchCriteria $criteria = null)
+    public function searchResources(RepositorySearchCriteria $criteria = null): SearchResourcesResult
     {
         $url = self::makeUrl($criteria);
-        $response = $this->service->makeRequest($url, [200, 204], 'GET', null, true, 'application/json', 'application/json');
+        $response = $this->service->makeRequest($url, [200, 204], 'GET', null, true);
 
         if ($response['statusCode'] === 204 || $response['body'] === null) {
             // A SearchResourceResult with 0 counts, and no items
@@ -84,8 +80,6 @@ class RepositoryService
 
         if (isset($headers['Start-Index'])) {
             $startIndex = (int) $headers['Start-Index'];
-        } elseif (isset($headers['Start-Index'])) {
-            $startIndex = (int) $headers['Start-Index'];
         } else {
             $startIndex = 0;
         }
@@ -96,12 +90,9 @@ class RepositoryService
     /**
      * Get resource by URI.
      *
-     * @param string $uri
-     * @param bool   $expanded Return subresources as definitions and not references?
-     *
-     * @return \Jaspersoft\Dto\Resource\Resource
+     * @param bool $expanded Return sub resources as definitions and not references?
      */
-    public function getResource($uri, $expanded = false)
+    public function getResource(string $uri, bool $expanded = false): Resource
     {
         if (!$expanded) {
             $url = self::makeUrl(null, $uri);
@@ -118,17 +109,7 @@ class RepositoryService
 
         $response = $this->service->makeRequest($url, [200, 204], 'GET', null, true, 'application/json', $type);
 
-        $data = $response['body'];
-        $headers = $response['headers'];
-        $content_type = array_values(preg_grep("#repository\.(.*)\+#", $headers));
-        preg_match("#repository\.(.*)\+#", $content_type[0], $resource_type);
-
-        $class = RESOURCE_NAMESPACE.'\\'.ucfirst($resource_type[1]);
-        if (class_exists($class) && is_subclass_of($class, RESOURCE_NAMESPACE.'\\Resource')) {
-            return $class::createFromJSON(json_decode($data, true), $class);
-        }
-
-        return Resource::createFromJSON(json_decode($data, true));
+        return $this->createResourceByResponse($response);
     }
 
     /**
@@ -150,15 +131,13 @@ class RepositoryService
      * Note: Resources can be placed at arbitrary locations, or in a folder. Thus, you must set EITHER $parentFolder
      * OR the uri parameter of the Resource used in the first argument.
      *
-     * @param \Jaspersoft\Dto\Resource\Resource $resource      Resource object fully describing new resource
-     * @param string                            $parentFolder  folder in which the resource should be created
-     * @param bool                              $createFolders Create folders in the path that may not exist?
+     * @param resource    $resource      Resource object fully describing new resource
+     * @param string|null $parentFolder  folder in which the resource should be created
+     * @param bool        $createFolders Create folders in the path that may not exist?
      *
      * @throws \Exception
-     *
-     * @return \Jaspersoft\Dto\Resource\Resource
      */
-    public function createResource(Resource $resource, $parentFolder = null, $createFolders = true)
+    public function createResource(Resource $resource, string $parentFolder = null, bool $createFolders = true): Resource
     {
         if ($parentFolder === null) {
             if (isset($resource->uri)) {
@@ -174,7 +153,7 @@ class RepositoryService
 
         $url .= '?'.Util::query_suffix(['createFolders' => $createFolders]);
         $body = $resource->toJSON();
-        $data = $this->service->prepAndSend($url, [201, 200], $verb, $body, true, $resource->contentType(), 'application/json');
+        $data = $this->service->prepAndSend($url, [201, 200], $verb, $body, true, $resource->contentType());
 
         return $resource::createFromJSON(json_decode($data, true), get_class($resource));
     }
@@ -182,12 +161,10 @@ class RepositoryService
     /**
      * Update a resource.
      *
-     * @param \Jaspersoft\Dto\Resource\Resource $resource  Resource object fully describing updated resource
-     * @param bool                              $overwrite Replace existing resource even if type differs?
-     *
-     * @return \Jaspersoft\Dto\Resource\Resource
+     * @param resource $resource  Resource object fully describing updated resource
+     * @param bool     $overwrite Replace existing resource even if type differs?
      */
-    public function updateResource(Resource $resource, $overwrite = false)
+    public function updateResource(Resource $resource, bool $overwrite = false): Resource
     {
         $url = self::makeUrl(null, $resource->uri);
         $body = $resource->toJSON();
@@ -196,7 +173,7 @@ class RepositoryService
         // Isolate the class name, lowercase it, and provide it as a filetype in the headers
         $type = explode('\\', get_class($resource));
         $file_type = 'application/repository.'.lcfirst(end($type)).'+json';
-        $data = $this->service->prepAndSend($url, [201, 200], 'PUT', $body, true, $file_type, 'application/json');
+        $data = $this->service->prepAndSend($url, [201, 200], 'PUT', $body, true, $file_type);
 
         return $resource::createFromJSON(json_decode($data, true), get_class($resource));
     }
@@ -204,12 +181,10 @@ class RepositoryService
     /**
      * Update a file on the server by supplying binary data.
      *
-     * @param \Jaspersoft\Dto\Resource\File $resource   A resource descriptor for the File
-     * @param string                        $binaryData The binary data of the file to update
-     *
-     * @return \Jaspersoft\Dto\Resource\Resource
+     * @param File   $resource   A resource descriptor for the File
+     * @param string $binaryData The binary data of the file to update
      */
-    public function updateFileResource(File $resource, $binaryData)
+    public function updateFileResource(File $resource, string $binaryData): Resource
     {
         $url = self::makeUrl(null, $resource->uri);
 
@@ -225,13 +200,9 @@ class RepositoryService
      * If you are using a custom MIME type, you must add the type => mimeType mapping
      * to the \Jaspersoft\Tool\MimeMapper mimeMap.
      *
-     * @param string $binaryData
-     * @param string $parentFolder  string The folder to place the file in
-     * @param bool   $createFolders
-     *
-     * @return \Jaspersoft\Dto\Resource\File
+     * @param string $parentFolder string The folder to place the file in
      */
-    public function createFileResource(File $resource, $binaryData, $parentFolder, $createFolders = true)
+    public function createFileResource(File $resource, string $binaryData, string $parentFolder, bool $createFolders = true): File
     {
         $url = self::makeUrl(null, $parentFolder);
 
@@ -249,27 +220,15 @@ class RepositoryService
      * @param string $destinationFolderUri URI of folder the resource is to be copied to
      * @param bool   $createFolders        Should folders be created if they do not already exist?
      * @param bool   $overwrite            Should files be overwritten while performing this operation?
-     *
-     * @return \Jaspersoft\Dto\Resource\Resource
      */
-    public function copyResource($resourceUri, $destinationFolderUri, $createFolders = true, $overwrite = false)
+    public function copyResource(string $resourceUri, string $destinationFolderUri, bool $createFolders = true, bool $overwrite = false): Resource
     {
         $url = self::makeUrl(null, $destinationFolderUri);
 
         $url .= '?'.Util::query_suffix(['createFolders' => $createFolders, 'overwrite' => $overwrite]);
         $response = $this->service->makeRequest($url, [200], 'POST', null, true, 'application/json', 'application/json', ['Content-Location: '.$resourceUri]);
 
-        $data = $response['body'];
-        $headers = $response['headers'];
-        $content_type = array_values(preg_grep("#repository\.(.*)\+#", $headers));
-        preg_match("#repository\.(.*)\+#", $content_type[0], $resource_type);
-
-        $class = RESOURCE_NAMESPACE.'\\'.ucfirst($resource_type[1]);
-        if (class_exists($class) && is_subclass_of($class, RESOURCE_NAMESPACE.'\\Resource')) {
-            return $class::createFromJSON(json_decode($data, true), $class);
-        }
-
-        return Resource::createFromJSON(json_decode($data, true));
+        return $this->createResourceByResponse($response);
     }
 
     /**
@@ -279,16 +238,34 @@ class RepositoryService
      * @param string $destinationFolderUri URI of folder the resource is to be copied to
      * @param bool   $createFolders        Should folders be created if they do not already exist?
      * @param bool   $overwrite            Should files be overwritten while performing this operation?
-     *
-     * @return \Jaspersoft\Dto\Resource\Resource
      */
-    public function moveResource($resourceUri, $destinationFolderUri, $createFolders = true, $overwrite = false)
+    public function moveResource(string $resourceUri, string $destinationFolderUri, bool $createFolders = true, bool $overwrite = false): Resource
     {
         $url = self::makeUrl(null, $destinationFolderUri);
 
         $url .= '?'.Util::query_suffix(['createFolders' => $createFolders, 'overwrite' => $overwrite]);
         $response = $this->service->makeRequest($url, [200], 'PUT', null, true, 'application/json', 'application/json', ['Content-Location: '.$resourceUri]);
 
+        return $this->createResourceByResponse($response);
+    }
+
+    /**
+     * Remove resource(s) from the repository.
+     *
+     * @param string|array $uris URI(s) of resources to remove
+     */
+    public function deleteResources($uris): void
+    {
+        if (is_array($uris)) {
+            $url = self::makeUrl().'?'.Util::query_suffix(['resourceUri' => $uris]);
+        } else {
+            $url = self::makeUrl(null, $uris);
+        }
+        $this->service->prepAndSend($url, [204], 'DELETE');
+    }
+
+    private function createResourceByResponse(array $response): Resource
+    {
         $data = $response['body'];
         $headers = $response['headers'];
         $content_type = array_values(preg_grep("#repository\.(.*)\+#", $headers));
@@ -300,20 +277,5 @@ class RepositoryService
         }
 
         return Resource::createFromJSON(json_decode($data, true));
-    }
-
-    /**
-     * Remove resource(s) from the repository.
-     *
-     * @param string|array $uris URI(s) of resources to remove
-     */
-    public function deleteResources($uris)
-    {
-        if (is_array($uris)) {
-            $url = self::makeUrl().'?'.Util::query_suffix(['resourceUri' => $uris]);
-        } else {
-            $url = self::makeUrl(null, $uris);
-        }
-        $this->service->prepAndSend($url, [204], 'DELETE', null, false);
     }
 }

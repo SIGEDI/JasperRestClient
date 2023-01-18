@@ -4,7 +4,7 @@ require_once 'BaseTest.php';
 use Jaspersoft\Dto\Job\Job;
 use Jaspersoft\Tool\TestUtils as u;
 
-class JobServiceTest extends BaseTest
+class JobsServiceTest extends BaseTest
 {
     protected $jc;
     protected $js;
@@ -13,7 +13,7 @@ class JobServiceTest extends BaseTest
     protected $testJob;
 
     /** Coverage: createJob, createResource **/
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -29,7 +29,7 @@ class JobServiceTest extends BaseTest
     }
 
     /** Coverage: deleteJob, deleteResource **/
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->js->deleteJob($this->testJob->id);
@@ -40,7 +40,7 @@ class JobServiceTest extends BaseTest
      *
      * This test ensures that objects created by createFromJSON are identical to the object from which the JSON came
      **/
-    public function testCreateFromJSONRoundTripPolicyObject()
+    public function testCreateFromJSONRoundTripPolicyObject(): void
     {
         $castedObj = Job::createFromJSON(json_decode($this->testJob->toJSON()));
         $this->assertSame($castedObj, $this->testJob);
@@ -50,7 +50,7 @@ class JobServiceTest extends BaseTest
      *
      * This test ensures that json created by toJSON are identical to the json created by a casted version of the object
      **/
-    public function testCreateFromJSONRoundTripPolicyJson()
+    public function testCreateFromJSONRoundTripPolicyJson(): void
     {
         $testJob_json = $this->testJob->toJSON();
         $castedJob_json = Job::createFromJSON(json_decode($testJob_json))->toJSON();
@@ -59,7 +59,7 @@ class JobServiceTest extends BaseTest
     }
 
     /** Coverage: searchJobs **/
-    public function testPutJobCreatesNewJob()
+    public function testPutJobCreatesNewJob(): void
     {
         $search = $this->js->searchJobs($this->testJob->source->reportUnitURI);
         $this->assertTrue(sizeof($search) > 0);
@@ -67,7 +67,7 @@ class JobServiceTest extends BaseTest
     }
 
     /** Coverage: updateJob **/
-    public function testUpdateJobChangesJob()
+    public function testUpdateJobChangesJob(): void
     {
         $this->testJob->label = 'UPDATED_TO_TEST';
         $this->js->updateJob($this->testJob);
@@ -76,14 +76,14 @@ class JobServiceTest extends BaseTest
     }
 
     /** Coverage: getJob, getJobState **/
-    public function testJobState()
+    public function testJobState(): void
     {
         $jobState = $this->js->getJobState($this->testJob->id);
         $this->assertTrue(!empty($jobState->value));
     }
 
     /** Coverage: pauseJob, getJobState **/
-    public function testPauseJob()
+    public function testPauseJob(): void
     {
         $this->js->pauseJob($this->testJob->id);
         $jobState = $this->js->getJobState($this->testJob->id);
@@ -92,7 +92,7 @@ class JobServiceTest extends BaseTest
     }
 
     /** Coverage: pauseJob, getJobState, resumeJob **/
-    public function testResumeJob()
+    public function testResumeJob(): void
     {
         self::testPauseJob();
         $this->js->resumeJob($this->testJob->id);

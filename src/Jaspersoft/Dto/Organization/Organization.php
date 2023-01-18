@@ -70,7 +70,7 @@ class Organization
         $this->tenantUri = $tenantUri;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $data = [];
         foreach (get_object_vars($this) as $k => $v) {

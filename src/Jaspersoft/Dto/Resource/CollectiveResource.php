@@ -12,7 +12,7 @@ use Jaspersoft\Tool\DTOMapper;
  */
 abstract class CollectiveResource extends Resource
 {
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $parent = parent::jsonSerialize();
         foreach (DTOMapper::collectionFields($this->name()) as $field) {

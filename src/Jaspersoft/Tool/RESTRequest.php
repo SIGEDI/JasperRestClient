@@ -19,6 +19,10 @@ class RESTRequest
     protected $file_to_upload = [];
     protected $headers;
     protected $curl_timeout;
+    /**
+     * @var false|string[]
+     */
+    private $response_headers;
 
     public function __construct($url = null, $verb = 'GET', $request_body = null)
     {
@@ -51,10 +55,10 @@ class RESTRequest
      */
     public $errorCode;
 
-    public static function splitHeaderArray($array)
+    public static function splitHeaderArray($array): array
     {
         $result = [];
-        foreach (array_values($array) as $value) {
+        foreach ($array as $value) {
             $pair = explode(':', $value, 2);
             if (count($pair) > 1) {
                 $result[$pair[0]] = ltrim($pair[1]);
@@ -66,7 +70,7 @@ class RESTRequest
         return $result;
     }
 
-    public function flush()
+    public function flush(): void
     {
         $this->request_body = null;
         $this->request_length = 0;
@@ -79,7 +83,7 @@ class RESTRequest
         $this->headers = null;
     }
 
-    public function execute()
+    public function execute(): void
     {
         $ch = curl_init();
         $this->setAuth($ch);
@@ -117,43 +121,36 @@ class RESTRequest
                 default:
                     throw new \InvalidArgumentException('Current verb ('.$this->verb.') is an invalid REST verb.');
             }
-        } catch (\InvalidArgumentException $e) {
-            curl_close($ch);
-            throw $e;
-        } catch (\Exception $e) {
+        } catch (\InvalidArgumentException|\Exception $e) {
             curl_close($ch);
             throw $e;
         }
     }
 
-    public function buildPostBody($data = null)
+    public function buildPostBody($data = null): void
     {
         $data = ($data !== null) ? $data : $this->request_body;
         $this->request_body = $data;
     }
 
-    protected function executeGet($ch)
+    protected function executeGet($ch): void
     {
         $this->doExecute($ch);
     }
 
-    protected function executePost($ch)
+    protected function executePost($ch): void
     {
         if (!is_string($this->request_body)) {
             $this->buildPostBody();
         }
-        /*
-                curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                'Content-Type: .' . $this->content_type
-                ));
-        */
+
         curl_setopt($ch, CURLOPT_POSTFIELDS, $this->request_body);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
 
         $this->doExecute($ch);
     }
 
-    protected function executeBinarySend($ch)
+    protected function executeBinarySend($ch): void
     {
         $post = $this->request_body;
 
@@ -170,7 +167,7 @@ class RESTRequest
     }
 
     // Set verb to PUT_MP to use this function
-    protected function executePutMultipart($ch)
+    protected function executePutMultipart($ch): void
     {
         $post = $this->request_body;
 
@@ -186,7 +183,7 @@ class RESTRequest
     }
 
     // Set verb to POST_MP to use this function
-    protected function executePostMultipart($ch)
+    protected function executePostMultipart($ch): void
     {
         $post = $this->request_body;
 
@@ -201,7 +198,7 @@ class RESTRequest
         curl_close($ch);
     }
 
-    protected function executePut($ch)
+    protected function executePut($ch): void
     {
         if (!is_string($this->request_body)) {
             $this->buildPostBody();
@@ -213,14 +210,14 @@ class RESTRequest
         $this->doExecute($ch);
     }
 
-    protected function executeDelete($ch)
+    protected function executeDelete($ch): void
     {
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
 
         $this->doExecute($ch);
     }
 
-    protected function doExecute(&$curlHandle)
+    protected function doExecute(&$curlHandle): void
     {
         $this->setCurlOpts($curlHandle);
         $response = curl_exec($curlHandle);
@@ -229,18 +226,18 @@ class RESTRequest
         $response = preg_replace("/^(?:HTTP\/1.1 100.*?\\r\\n\\r\\n)+/ms", '', $response);
 
         //  100-continue chunks are returned on multipart communications
-        $headerblock = mb_strstr($response, "\r\n\r\n", true);
+        $headerBlock = mb_strstr($response, "\r\n\r\n", true);
 
         // strstr returns the matched characters and following characters, but we want to discard of "\r\n\r\n", so
         // we delete the first 4 bytes of the returned string.
         $this->response_body = mb_substr(mb_strstr($response, "\r\n\r\n"), 4);
         // headers are always separated by \n until the end of the header block which is separated by \r\n\r\n.
-        $this->response_headers = explode("\r\n", $headerblock);
+        $this->response_headers = explode("\r\n", $headerBlock);
 
         curl_close($curlHandle);
     }
 
-    protected function setCurlOpts(&$curlHandle)
+    protected function setCurlOpts(&$curlHandle): void
     {
         curl_setopt($curlHandle, CURLOPT_URL, $this->url);
         curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
@@ -258,7 +255,7 @@ class RESTRequest
         }
     }
 
-    protected function setAuth(&$curlHandle)
+    protected function setAuth(&$curlHandle): void
     {
         if ($this->username !== null && $this->password !== null) {
             curl_setopt($curlHandle, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
@@ -266,97 +263,121 @@ class RESTRequest
         }
     }
 
-    protected function setTimeout(&$curlHandle)
+    protected function setTimeout(&$curlHandle): void
     {
         curl_setopt($curlHandle, CURLOPT_TIMEOUT, $this->curl_timeout);
     }
 
-    public function defineTimeout($seconds)
+    public function defineTimeout($seconds): void
     {
         $this->curl_timeout = $seconds;
     }
 
-    public function getFileToUpload()
+    public function getFileToUpload(): array
     {
         return $this->file_to_upload;
     }
 
-    public function setFileToUpload($filepath)
+    public function setFileToUpload($filepath): void
     {
         $this->file_to_upload = $filepath;
     }
 
+    /**
+     * @return null
+     */
     public function getAcceptType()
     {
         return $this->accept_type;
     }
 
-    public function setAcceptType($accept_type)
+    public function setAcceptType($accept_type): void
     {
         $this->accept_type = $accept_type;
     }
 
-    public function getContentType()
+    public function getContentType(): string
     {
         return $this->content_type;
     }
 
-    public function setContentType($content_type)
+    public function setContentType($content_type): void
     {
         $this->content_type = $content_type;
     }
 
+    /**
+     * @return null
+     */
     public function getPassword()
     {
         return $this->password;
     }
 
-    public function setPassword($password)
+    public function setPassword($password): void
     {
         $this->password = $password;
     }
 
+    /**
+     * @return null
+     */
     public function getResponseBody()
     {
         return $this->response_body;
     }
 
+    /**
+     * @return null
+     */
     public function getResponseInfo()
     {
         return $this->response_info;
     }
 
+    /**
+     * @return mixed|null
+     */
     public function getUrl()
     {
         return $this->url;
     }
 
-    public function setUrl($url)
+    public function setUrl($url): void
     {
         $this->url = $url;
     }
 
+    /**
+     * @return null
+     */
     public function getUsername()
     {
         return $this->username;
     }
 
-    public function setUsername($username)
+    public function setUsername($username): void
     {
         $this->username = $username;
     }
 
+    /**
+     * @return mixed|string
+     */
     public function getVerb()
     {
         return $this->verb;
     }
 
-    public function setVerb($verb)
+    public function setVerb($verb): void
     {
         $this->verb = $verb;
     }
 
-    public function handleError($statusCode, $expectedCodes, $responseBody)
+    /**
+     * @throws RESTRequestException
+     */
+    public function handleError($statusCode, $expectedCodes, $responseBody): void
     {
         if (!empty($responseBody)) {
             $errorData = json_decode($responseBody);
@@ -371,43 +392,28 @@ class RESTRequest
             if (!empty($errorData->parameters)) {
                 $exception->parameters = $errorData->parameters;
             }
-
-            throw $exception;
         } else {
             $exception = new RESTRequestException(RESTRequestException::UNEXPECTED_CODE_MSG);
             $exception->expectedStatusCodes = $expectedCodes;
             $exception->statusCode = $statusCode;
-
-            throw $exception;
         }
+        throw $exception;
     }
 
-    public function makeRequest($url, $expectedCodes = [200], $verb = null, $reqBody = null, $returnData = false,
-                                   $contentType = 'application/json', $acceptType = 'application/json', $headers = [])
-    {
-        $result = [];
-
-        $this->flush();
-        $this->setUrl($url);
-        if ($verb !== null) {
-            $this->setVerb($verb);
-        }
-        if ($reqBody !== null) {
-            $this->buildPostBody($reqBody);
-        }
-        if (!empty($contentType)) {
-            $this->setContentType($contentType);
-        }
-        if (!empty($acceptType)) {
-            $this->setAcceptType($acceptType);
-        }
-        if (!empty($headers)) {
-            $this->headers = $headers;
-        }
-
-        $this->execute();
-
-        $info = $this->getResponseInfo();
+    /**
+     * @throws RESTRequestException
+     */
+    public function makeRequest(
+        $url,
+        $expectedCodes = [200],
+        $verb = null,
+        $reqBody = null,
+        $returnData = false,
+        $contentType = 'application/json',
+        $acceptType = 'application/json',
+        $headers = []
+    ): array {
+        $info = $this->processReset($url, $verb, $reqBody, $contentType, $acceptType, $headers);
         $statusCode = $info['http_code'];
         $body = $this->getResponseBody();
 
@@ -421,29 +427,20 @@ class RESTRequest
         return compact('body', 'statusCode', 'headers');
     }
 
-    public function prepAndSend($url, $expectedCodes = [200], $verb = null, $reqBody = null, $returnData = false,
-                                   $contentType = 'application/json', $acceptType = 'application/json', $headers = [])
-    {
-        $this->flush();
-        $this->setUrl($url);
-        if ($verb !== null) {
-            $this->setVerb($verb);
-        }
-        if ($reqBody !== null) {
-            $this->buildPostBody($reqBody);
-        }
-        if (!empty($contentType)) {
-            $this->setContentType($contentType);
-        }
-        if (!empty($acceptType)) {
-            $this->setAcceptType($acceptType);
-        }
-        if (!empty($headers)) {
-            $this->headers = $headers;
-        }
-
-        $this->execute();
-        $statusCode = $this->getResponseInfo();
+    /**
+     * @throws RESTRequestException
+     */
+    public function prepAndSend(
+        $url,
+        $expectedCodes = [200],
+        $verb = null,
+        $reqBody = null,
+        $returnData = false,
+        $contentType = 'application/json',
+        $acceptType = 'application/json',
+        $headers = []
+    ): ?bool {
+        $statusCode = $this->processReset($url, $verb, $reqBody, $contentType, $acceptType, $headers);
         $responseBody = $this->getResponseBody();
         $statusCode = $statusCode['http_code'];
 
@@ -462,19 +459,23 @@ class RESTRequest
      * This function creates a multipart/form-data request and sends it to the server.
      * this function should only be used when a file is to be sent with a request (PUT/POST).
      *
-     * @param string     $url          - URL to send request to
-     * @param int|string $expectedCode - HTTP Status Code you expect to receive on success
-     * @param string     $verb         - HTTP Verb to send with request
-     * @param string     $reqBody      - The body of the request if necessary
-     * @param array      $file         - An array with the URI string representing the image, and the filepath to the image. (i.e: array('/images/JRLogo', '/home/user/jasper.jpg') )
-     * @param bool       $returnData   - whether or not you wish to receive the data returned by the server or not
+     * @param string      $url          - URL to send request to
+     * @param int|string  $expectedCode - HTTP Status Code you expect to receive on success
+     * @param string      $verb         - HTTP Verb to send with request
+     * @param string|null $reqBody      - The body of the request if necessary
+     * @param array|null  $file         - An array with the URI string representing the image, and the filepath to the image. (i.e: array('/images/JRLogo', '/home/user/jasper.jpg') )
+     * @param bool        $returnData   - whether you wish to receive the data returned by the server or not
      *
      * @return array - Returns an array with the response info and the response body, since the server sends a 100 request, it is hard to validate the success of the request
      */
-    public function multipartRequestSend($url, $expectedCode = 200, $verb = 'PUT_MP', $reqBody = null, $file = null,
-                                            $returnData = false)
-    {
-        $expectedCode = (int) $expectedCode;
+    public function multipartRequestSend(
+        string $url,
+        $expectedCode = 200,
+        string $verb = 'PUT_MP',
+        string $reqBody = null,
+        array $file = null,
+        bool $returnData = false
+    ): array {
         $this->flush();
         $this->setUrl($url);
         $this->setVerb($verb);
@@ -492,6 +493,11 @@ class RESTRequest
         return [$statusCode, $responseBody];
     }
 
+    /**
+     * @throws RESTRequestException
+     *
+     * @return null
+     */
     public function sendBinary($url, $expectedCodes, $body, $contentType, $contentDisposition, $contentDescription, $verb = 'POST')
     {
         $this->flush();
@@ -512,5 +518,33 @@ class RESTRequest
         }
 
         return $this->getResponseBody();
+    }
+
+    /**
+     * @return null
+     */
+    public function processReset($url, $verb, $reqBody, $contentType, $acceptType, $headers)
+    {
+        $this->flush();
+        $this->setUrl($url);
+        if ($verb !== null) {
+            $this->setVerb($verb);
+        }
+        if ($reqBody !== null) {
+            $this->buildPostBody($reqBody);
+        }
+        if (!empty($contentType)) {
+            $this->setContentType($contentType);
+        }
+        if (!empty($acceptType)) {
+            $this->setAcceptType($acceptType);
+        }
+        if (!empty($headers)) {
+            $this->headers = $headers;
+        }
+
+        $this->execute();
+
+        return $this->getResponseInfo();
     }
 }

@@ -27,7 +27,7 @@ class ReportOptions
         $this->label = (!empty($label)) ? strval($label) : null;
     }
 
-    public static function createFromJSON($json)
+    public static function createFromJSON($json): array
     {
         $data_array = json_decode($json, true);
         $result = [];

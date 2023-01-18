@@ -90,10 +90,8 @@ class CalendarTrigger extends Trigger
 
     /**
      * Overrides Trigger to provide proper JSON hierarchy as described by JRS.
-     *
-     * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $result = [];
         foreach (get_object_vars($this) as $k => $v) {
@@ -118,10 +116,8 @@ class CalendarTrigger extends Trigger
      * and casts it as a CalendarTrigger Object.
      *
      * @param \stdClass $json_obj
-     *
-     * @return CalendarTrigger
      */
-    public static function createFromJSON($json_obj)
+    public static function createFromJSON($json_obj): CalendarTrigger
     {
         $result = new self();
         foreach ($json_obj as $k => $v) {

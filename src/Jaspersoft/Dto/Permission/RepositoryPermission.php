@@ -33,7 +33,7 @@ class RepositoryPermission
         $this->mask = $mask;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $data = [];
         foreach (get_object_vars($this) as $k => $v) {
@@ -45,7 +45,7 @@ class RepositoryPermission
         return $data;
     }
 
-    public static function createFromJSON($json_data)
+    public static function createFromJSON($json_data): RepositoryPermission
     {
         $perm = json_decode($json_data);
 

@@ -84,7 +84,7 @@ class OutputFTPInfo
      */
     public $pbsz;
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $result = [];
         foreach (get_object_vars($this) as $k => $v) {
@@ -96,7 +96,7 @@ class OutputFTPInfo
         return $result;
     }
 
-    public static function createFromJSON($json_obj)
+    public static function createFromJSON($json_obj): OutputFTPInfo
     {
         $result = new self();
         foreach ($json_obj as $k => $v) {

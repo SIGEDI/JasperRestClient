@@ -23,7 +23,7 @@ class UserService
         $this->restUrl2 = $client->getURL();
     }
 
-    private function makeUserUrl($organization, $username = null, $params = null)
+    private function makeUserUrl($organization, $username = null, $params = null): string
     {
         if (!empty($organization)) {
             $url = $this->restUrl2.'/organizations/'.$organization.'/users';
@@ -42,7 +42,7 @@ class UserService
         return $url;
     }
 
-    private function makeAttributeUrl($username, $tenantID = null, $attributeNames = null, $attrName = null)
+    private function makeAttributeUrl($username, $tenantID = null, $attributeNames = null, $attrName = null): string
     {
         if (!empty($tenantID)) {
             $url = $this->restUrl2.'/organizations/'.$tenantID.'/users/'.$username.
@@ -69,28 +69,28 @@ class UserService
      * If defining requiredRoles that exist in multiple organizations, you must suffix the ROLE name with
      * |organization_id (i.e: ROLE_USER|organization_1)
      *
-     * @param string $searchTerm          A query to filter results by
-     * @param string $organization
-     * @param array  $requiredRoles
-     * @param bool   $hasAllRequiredRoles
-     * @param bool   $includeSubOrgs
-     * @param int    $limit               A number to limit results by (pagination controls)
-     * @param int    $offset              A number to offset the results by (pagination controls)
-     *
-     * @return array
+     * @param string|null $searchTerm A query to filter results by
+     * @param int         $limit      A number to limit results by (pagination controls)
+     * @param int         $offset     A number to offset the results by (pagination controls)
      */
-    public function searchUsers($searchTerm = null, $organization = null,
-                                $requiredRoles = null, $hasAllRequiredRoles = null, $includeSubOrgs = true, $limit = 0, $offset = 0)
-    {
+    public function searchUsers(
+        string $searchTerm = null,
+        string $organization = null,
+        array $requiredRoles = null,
+        bool $hasAllRequiredRoles = null,
+        bool $includeSubOrganizations = true,
+        int $limit = 0,
+        int $offset = 0
+    ): array {
         $result = [];
         $url = self::makeUserUrl($organization, null,
             ['q' => $searchTerm,
                   'requiredRole' => $requiredRoles,
                   'hasAllRequiredRoles' => $hasAllRequiredRoles,
-                  'includeSubOrgs' => $includeSubOrgs,
+                  'includeSubOrgs' => $includeSubOrganizations,
                   'limit' => $limit,
                   'offset' => $offset]);
-        $data = $this->service->prepAndSend($url, [200, 204], 'GET', null, true, 'application/json', 'application/json');
+        $data = $this->service->prepAndSend($url, [200, 204], 'GET', null, true);
         if (!empty($data)) {
             $users = json_decode($data);
             foreach ($users->user as $user) {
@@ -108,26 +108,19 @@ class UserService
 
     /**
      * Return the user object represented by the provided UserLookup object.
-     *
-     * @return \Jaspersoft\Dto\User\User
      */
-    public function getUserByLookup(UserLookup $userLookup)
+    public function getUserByLookup(UserLookup $userLookup): User
     {
         return $this->getUser($userLookup->username, $userLookup->tenantId);
     }
 
     /**
      * Request the User object for $username within $organization.
-     *
-     * @param string $username
-     * @param string $organization
-     *
-     * @return \Jaspersoft\Dto\User\User
      */
-    public function getUser($username, $organization = null)
+    public function getUser(string $username, string $organization = null): User
     {
         $url = self::makeUserUrl($organization, $username);
-        $data = $this->service->prepAndSend($url, [200, 204], 'GET', null, true, 'application/json', 'application/json');
+        $data = $this->service->prepAndSend($url, [200, 204], 'GET', null, true);
         $userData = json_decode($data);
         $result = @new User(
             $userData->username,
@@ -149,15 +142,11 @@ class UserService
 
     /**
      * Add or Update a user.
-     *
-     * @param \Jaspersoft\Dto\User\User
-     *
-     * @throws \Jaspersoft\Exception\RESTRequestException
      */
-    public function addOrUpdateUser($user)
+    public function addOrUpdateUser(User $user): void
     {
         $url = self::makeUserUrl($user->tenantId, $user->username);
-        $this->service->prepAndSend($url, [200, 201], 'PUT', json_encode($user), true, 'application/json', 'application/json');
+        $this->service->prepAndSend($url, [200, 201], 'PUT', json_encode($user), true);
     }
 
     /**
@@ -166,26 +155,20 @@ class UserService
      * First get the user using getUsers(), then provide the user you wish to delete
      * as the parameter for this function.
      */
-    public function deleteUser(User $user)
+    public function deleteUser(User $user): void
     {
         $url = self::makeUserUrl($user->tenantId, $user->username);
-        $this->service->prepAndSend($url, [204], 'DELETE', null, false, 'application/json', 'application/json');
+        $this->service->prepAndSend($url, [204], 'DELETE');
     }
 
     /**
      * Retrieve attributes of a user.
-     *
-     * @param array $attributeNames
-     *
-     * @throws \Exception
-     *
-     * @return array|null
      */
-    public function getAttributes(User $user, $attributeNames = null)
+    public function getAttributes(User $user, array $attributeNames = null): ?array
     {
         $result = [];
         $url = self::makeAttributeUrl($user->username, $user->tenantId, $attributeNames);
-        $data = $this->service->prepAndSend($url, [200, 204], 'GET', null, true, 'application/json', 'application/json');
+        $data = $this->service->prepAndSend($url, [200, 204], 'GET', null, true);
 
         if (!empty($data)) {
             $json = json_decode($data);
@@ -205,42 +188,34 @@ class UserService
 
     /**
      * Create a non-existent attribute, or update an existing attribute.
-     *
-     * @param \Jaspersoft\Dto\Attribute\Attribute $attribute
-     *
-     * @return bool|null
      */
-    public function addOrUpdateAttribute(User $user, $attribute)
+    public function addOrUpdateAttribute(User $user, Attribute $attribute): ?bool
     {
         $url = self::makeAttributeUrl($user->username, $user->tenantId, null, $attribute->name);
         $data = json_encode($attribute);
 
-        return $this->service->prepAndSend($url, [201, 200], 'PUT', $data, false,
-            'application/json', 'application/json');
+        return $this->service->prepAndSend($url, [201, 200], 'PUT', $data);
     }
 
     /**
      * Replace all existing attributes with the provided set.
      */
-    public function replaceAttributes(User $user, array $attributes)
+    public function replaceAttributes(User $user, array $attributes): void
     {
         $url = self::makeAttributeUrl($user->username, $user->tenantId);
         $data = json_encode(['attribute' => $attributes]);
-        $this->service->prepAndSend($url, [200], 'PUT', $data, 'application/json', 'application/json');
+        $this->service->prepAndSend($url, [200], 'PUT', $data, 'application/json');
     }
 
     /**
      * Remove all attributes, or specific attributes from a user.
-     *
-     * @param array $attributes
      */
-    public function deleteAttributes(User $user, $attributes = null)
+    public function deleteAttributes(User $user, array $attributes = null)
     {
         $url = self::makeAttributeUrl($user->username, $user->tenantId);
         if (!empty($attributes)) {
             $url .= '?'.Util::query_suffix(['name' => $attributes]);
         }
-        $this->service->prepAndSend($url, [204], 'DELETE', null, false,
-            'application/json', 'application/json');
+        $this->service->prepAndSend($url, [204], 'DELETE');
     }
 }

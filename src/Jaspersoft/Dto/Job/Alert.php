@@ -88,12 +88,12 @@ class Alert
      */
     public $includingReportJobInfo;
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $result = [];
         foreach (get_object_vars($this) as $k => $v) {
             if (isset($v)) {
-                // Here a special case is handled as the JRS server requires a sublevel
+                // Here a special case is handled as the JRS server requires a sub level
                 // of address for this attribute in its JSON hierarchy
                 if ($k === 'toAddresses') {
                     $result[$k] = ['address' => $this->toAddresses];
@@ -108,12 +108,8 @@ class Alert
 
     /** This function takes a \stdClass decoded by json_decode representing a scheduled job
      * and casts it as an Alert Object.
-     *
-     * @param \stdClass $json_obj
-     *
-     * @return Alert
      */
-    public static function createFromJSON($json_obj)
+    public static function createFromJSON(\stdClass $json_obj): Alert
     {
         $result = new self();
         if (isset($json_obj->toAddresses)) {

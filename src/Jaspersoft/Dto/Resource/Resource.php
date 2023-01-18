@@ -30,7 +30,7 @@ class Resource
         return json_encode($this->jsonSerialize());
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $result = [];
         foreach (get_object_vars($this) as $k => $v) {
@@ -42,27 +42,21 @@ class Resource
         return $result;
     }
 
-    public function __construct()
-    {
-    }
-
-    public function name()
+    public function name(): string
     {
         $type = explode('\\', get_class($this));
-        $type = lcfirst(end($type));
 
-        return $type;
+        return lcfirst(end($type));
     }
 
-    public static function className()
+    public static function className(): string
     {
         $type = explode('\\', get_called_class());
-        $type = lcfirst(end($type));
 
-        return $type;
+        return lcfirst(end($type));
     }
 
-    public function contentType()
+    public function contentType(): string
     {
         return 'application/repository.'.$this->name().'+json';
     }

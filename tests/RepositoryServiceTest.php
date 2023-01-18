@@ -2,7 +2,6 @@
 
 require_once 'BaseTest.php';
 use Jaspersoft\Dto\Resource\JdbcDataSource;
-use Jaspersoft\Dto\Resource\Resource;
 use Jaspersoft\Service\Criteria\RepositorySearchCriteria;
 use Jaspersoft\Tool\TestUtils as u;
 
@@ -14,7 +13,7 @@ class RepositoryServiceTest extends BaseTest
     protected $newResource_folder;
     public $pwd;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -23,14 +22,9 @@ class RepositoryServiceTest extends BaseTest
         $this->rs = $this->jc->repositoryService();
     }
 
-    public function tearDown()
-    {
-        parent::tearDown();
-    }
-
     /** Coverage: createFileResource, RepositorySearchCriteria, searchResources
             getResource, getBinaryFileData **/
-    public function testCreateImageResource()
+    public function testCreateImageResource(): void
     {
         $folder = u::createFolder();
         $img = u::createImage($folder);
@@ -50,7 +44,7 @@ class RepositoryServiceTest extends BaseTest
 
     /** Coverage: createResource, searchResources, getResource,
             deleteResources **/
-    public function testCreateResourceInFolder()
+    public function testCreateResourceInFolder(): void
     {
         $folder = u::createFolder();
         $this->rs->createResource($folder, '/', true);
@@ -65,7 +59,7 @@ class RepositoryServiceTest extends BaseTest
         $this->rs->deleteResources($folder->uri);
     }
 
-    public function testCreateResourceWithArbitraryID()
+    public function testCreateResourceWithArbitraryID(): void
     {
         $folder = u::createFolder();
         $this->rs->createResource($folder, null, true);
@@ -79,7 +73,7 @@ class RepositoryServiceTest extends BaseTest
     }
 
     /** Coverage: updateResource, createResource, searchResources, searchResourcesCriteria, deleteResources **/
-    public function testUpdateResource()
+    public function testUpdateResource(): void
     {
         $folder = u::createFolder();
         $this->rs->createResource($folder, '/', true);
@@ -102,7 +96,7 @@ class RepositoryServiceTest extends BaseTest
 
     /** Coverage: createResource, moveResource, searchResources, getResource
             deleteResources **/
-    public function testMoveResource()
+    public function testMoveResource(): void
     {
         $folder = u::createFolder();
         $this->rs->createResource($folder, '/', true);
@@ -116,12 +110,7 @@ class RepositoryServiceTest extends BaseTest
         $this->rs->deleteResources([$obj->uri, $folder->uri.'_new']);
     }
 
-    /**
-     * @expectedException \Jaspersoft\Exception\ResourceServiceException
-     *
-     * @expectedExceptionMessage CreateResource: You must set either the parentFolder parameter or set a URI for the provided resource.
-     */
-    public function testExceptionThrownWithoutValidURICreateResource()
+    public function testExceptionThrownWithoutValidURICreateResource(): void
     {
         $resource = new JdbcDataSource();
         $resource->driverClass = 'org.postgresql.Driver';

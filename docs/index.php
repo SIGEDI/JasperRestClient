@@ -1,23 +1,26 @@
 <!DOCTYPE html>
 
 <?php
+    /**
+     * @return false|void
+     */
     function inject_sample($file)
     {
-        $dirfile = dirname(__FILE__).'/'.$file;
-        if (empty($dirfile) || !file_exists($dirfile)) {
-            printf('Cannot open sample code: %s', $dirfile);
+        $directoryFile = dirname(__FILE__).'/'.$file;
+        if (empty($directoryFile) || !file_exists($directoryFile)) {
+            printf('Cannot open sample code: %s', $directoryFile);
 
             return false;
         }
-        $fh = fopen($dirfile, 'r')
+        $fh = fopen($directoryFile, 'r')
             or printf('Cannot open sample code');
-        $contents = fread($fh, filesize($dirfile));
+        $contents = fread($fh, filesize($directoryFile));
         echo htmlentities($contents);
         fclose($fh);
     }
 ?>
 
-<html>
+<html lang="en-US">
   <head>
     <title>Documentation</title>
 
@@ -25,7 +28,6 @@
 	<link rel="stylesheet" href="highlight/styles/github.css">
 
   <style>
-  .deprecated_notice { color: #f00; font-style: italic; }
   #section_group { font-size: 32pt; }
   </style>
 
@@ -56,7 +58,7 @@
 			   The JasperReports PHP Client is a wrapper for the JasperReports Web Services REST API. This client abstracts the details behind the communications with the server
 			   into simple to use functions representative of their functionality on the server. Users do not have to deal with parsing and creating JSON data, but rather deal with
 			   objects that represent objects within the server.<br>
-			   Use of this wrapper is intented to allow users to focus on their logic and implementation rather than detailed communications with a server.
+			   Use of this wrapper is intended to allow users to focus on their logic and implementation rather than detailed communications with a server.
 			</p>
 		</article>
 	</section>
@@ -119,20 +121,19 @@ end of skeleton -->
 	<article id="service_access">
 		<h3> List of Services </h3>
 		<p>
-		There are many services exposed through the client. Each can be requested as an object or accessed through the client itself each time.
-		
-		<ul>
-			<li> importExportService </li>
-			<li> jobService </li>
-			<li> optionsService </li>
-			<li> organizationService </li>
-			<li> permissionService </li>
-			<li> queryService </li>
-			<li> reportService </li>
-			<li> repositoryService </li>
-			<li> roleService </li>
-			<li> userService </li>
-		</ul>
+            There are many services exposed through the client. Each can be requested as an object or accessed through the client itself each time.
+            <ul>
+                <li> importExportService </li>
+                <li> jobService </li>
+                <li> optionsService </li>
+                <li> organizationService </li>
+                <li> permissionService </li>
+                <li> queryService </li>
+                <li> reportService </li>
+                <li> repositoryService </li>
+                <li> roleService </li>
+                <li> userService </li>
+            </ul>
 		</p>
 		<pre><code><?php inject_sample('code/service_access.txt'); ?>
 		</code>

@@ -82,10 +82,8 @@ abstract class CompositeDTOMapper extends DTOMapper
      *
      * @param $field Field to be resolved
      * @param $map Map to use for resolution
-     *
-     * @return string|null
      */
-    private static function forwardResolve($field, $map)
+    private static function forwardResolve(Field $field, Map $map): ?string
     {
         if (array_key_exists($field, $map)) {
             return $map[$field];
@@ -99,10 +97,8 @@ abstract class CompositeDTOMapper extends DTOMapper
      *
      * @param $field Field to be resolved
      * @param $map Map to use for resolution
-     *
-     * @return string|null
      */
-    private static function reverseResolve($field, $map)
+    private static function reverseResolve(Field $field, Map $map): ?string
     {
         $backwardMap = array_reverse($map);
         if (array_key_exists($field, $backwardMap)) {
@@ -121,11 +117,9 @@ abstract class CompositeDTOMapper extends DTOMapper
      *      semanticLayerDataSource: schema -> schemaFileReference
      *
      * @param $field Reference Field Name
-     * @param $class string Name of the class to obtain reference for
-     *
-     * @return string|null
+     * @param $class string|null Name of the class to obtain reference for
      */
-    public static function referenceKey($field, $class = null)
+    public static function referenceKey(Reference $field, string $class = null): ?string
     {
         if (!empty($class) and array_key_exists($class, static::$referenceMap)) {
             return self::forwardResolve($field, static::$referenceMap[$class]);
@@ -134,7 +128,7 @@ abstract class CompositeDTOMapper extends DTOMapper
         return self::forwardResolve($field, static::$referenceMap['default']);
     }
 
-    public static function dereferenceKey($field, $class = null)
+    public static function dereferenceKey($field, $class = null): ?string
     {
         if (!empty($class) and array_key_exists($class, static::$referenceMap)) {
             return self::reverseResolve($field, static::$referenceMap[$class]);
@@ -146,15 +140,13 @@ abstract class CompositeDTOMapper extends DTOMapper
     /** Returns a boolean value stating whether the field is recognized as a reference key or not.
      *
      * @param $field resource field name
-     *
-     * @return bool
      */
-    public static function isReferenceKey($field)
+    public static function isReferenceKey($field): bool
     {
         return array_key_exists($field, static::$referenceMap['default']);
     }
 
-    public static function compositeFields($class)
+    public static function compositeFields($class): ?string
     {
         $className = explode('\\', $class);
         $className = end($className);
@@ -162,7 +154,7 @@ abstract class CompositeDTOMapper extends DTOMapper
         return self::forwardResolve($className, static::$compositeFieldMap);
     }
 
-    public static function fileResourceField($field, $class = null)
+    public static function fileResourceField($field, $class = null): ?string
     {
         if (!empty($class) and array_key_exists($class, static::$fileResourceMap)) {
             return self::forwardResolve($field, static::$fileResourceMap[$class]);
@@ -171,7 +163,7 @@ abstract class CompositeDTOMapper extends DTOMapper
         return self::forwardResolve($field, static::$fileResourceMap['default']);
     }
 
-    public static function fileResourceFieldReverse($field, $class = null)
+    public static function fileResourceFieldReverse($field, $class = null): ?string
     {
         if (!empty($class) and array_key_exists($class, static::$fileResourceMap)) {
             return self::reverseResolve($field, static::$fileResourceMap[$class]);

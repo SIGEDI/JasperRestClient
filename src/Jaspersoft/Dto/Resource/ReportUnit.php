@@ -18,7 +18,7 @@ class ReportUnit extends CompositeResource
     public $inputControls;
     public $resources;
 
-    public static function createFromJSON($json_data, $type = null)
+    public static function createFromJSON($json_data, $type = null): array
     {
         // Handle resources here as a special case
         if (!empty($json_data['resources']['resource'])) {
@@ -30,7 +30,7 @@ class ReportUnit extends CompositeResource
         return parent::createFromJSON($json_data, $type);
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         if (!empty($this->resources)) {
             $parent = parent::jsonSerialize();

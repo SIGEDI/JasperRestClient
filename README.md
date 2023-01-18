@@ -10,8 +10,8 @@ Using this library you can make requests and interact with the Jasper Reports Se
 Requirements
 -------------
 To use this client, you will need:
-- JasperReports Server (version >= 5.2)
-- PHP (version >= 5.3, with cURL extension)
+- JasperReports Server (version >= 5.2) 
+- PHP (version >= 7.2.5, with cURL extension)
 - Composer dependency manager <http://getcomposer.org/download> (Optional, but recommended)
 
 

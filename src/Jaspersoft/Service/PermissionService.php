@@ -20,7 +20,7 @@ class PermissionService
         $this->restUrl2 = $client->getURL();
     }
 
-    private function batchDataToArray($json_data)
+    private function batchDataToArray($json_data): array
     {
         $result = [];
         $data_array = json_decode($json_data);
@@ -34,23 +34,29 @@ class PermissionService
     /**
      * Obtain the permissions of a resource on the server.
      *
-     * @param string $uri
-     * @param bool   $effectivePermissions Show all permissions affected by URI?
-     * @param string $recipientType        Type of permission (e.g: user/role)
-     * @param string $recipientId          the id of the recipient (requires recipientType)
-     * @param bool   $resolveAll           Resolve for all matched recipients?
+     * @param bool|null   $effectivePermissions Show all permissions affected by URI?
+     * @param string|null $recipientType        Type of permission (e.g: user/role)
+     * @param string|null $recipientId          the id of the recipient (requires recipientType)
+     * @param bool|null   $resolveAll           Resolve for all matched recipients?
      *
      * @return array A resultant set of RepositoryPermission
      */
-    public function searchRepositoryPermissions($uri, $effectivePermissions = null, $recipientType = null, $recipientId = null, $resolveAll = null)
-    {
+    public function searchRepositoryPermissions(
+        string $uri,
+        bool $effectivePermissions = null,
+        string $recipientType = null,
+        string $recipientId = null,
+        bool $resolveAll = null
+    ): array {
         $url = $this->restUrl2.'/permissions'.$uri;
-        $url .= '?'.Util::query_suffix([
-                                'effectivePermissions' => $effectivePermissions,
-                                'recipientType' => $recipientType,
-                                'recipientId' => $recipientId,
-                                'resolveAll' => $resolveAll]);
-        $data = $this->service->prepAndSend($url, [200, 204], 'GET', null, true, 'application/json', 'application/json');
+        $url .= '?'.
+            Util::query_suffix([
+                'effectivePermissions' => $effectivePermissions,
+                'recipientType' => $recipientType,
+                'recipientId' => $recipientId,
+                'resolveAll' => $resolveAll,
+            ]);
+        $data = $this->service->prepAndSend($url, [200, 204], 'GET', null, true);
         if (empty($data)) {
             return [];
         }
@@ -63,10 +69,8 @@ class PermissionService
      *
      * @param string $uri          URI of the resource within the repository
      * @param string $recipientUri URI of recipient needed
-     *
-     * @return \Jaspersoft\Dto\Permission\RepositoryPermission
      */
-    public function getRepositoryPermission($uri, $recipientUri)
+    public function getRepositoryPermission(string $uri, string $recipientUri): RepositoryPermission
     {
         $url = $this->restUrl2.'/permissions'.$uri;
         $url .= ';recipient='.str_replace('/', '%2F', $recipientUri);
@@ -80,11 +84,9 @@ class PermissionService
      *
      * Note: only the mask of a RepositoryPermission can be updated
      *
-     * @param \Jaspersoft\Dto\Permission\RepositoryPermission $permission updated RepositoryPermission object
-     *
-     * @return RepositoryPermission
+     * @param RepositoryPermission $permission updated RepositoryPermission object
      */
-    public function updateRepositoryPermission(RepositoryPermission $permission)
+    public function updateRepositoryPermission(RepositoryPermission $permission): RepositoryPermission
     {
         $url = $this->restUrl2.'/permissions'.$permission->uri;
         $url .= ';recipient='.str_replace('/', '%2F', $permission->recipient);
@@ -96,16 +98,15 @@ class PermissionService
     /**
      * Update a set of RepositoryPermission.
      *
-     * @param string $uri
-     * @param array  $permissions Set of updated RepositoryPermission objects
+     * @param array $permissions Set of updated RepositoryPermission objects
      *
      * @return array Set of RepositoryPermissions that were updated
      */
-    public function updateRepositoryPermissions($uri, $permissions)
+    public function updateRepositoryPermissions(string $uri, array $permissions): array
     {
         $url = $this->restUrl2.'/permissions'.$uri;
         $body = json_encode(['permission' => $permissions]);
-        $permissions = $this->service->prepAndSend($url, [200], 'PUT', $body, true, 'application/collection+json', 'application/json');
+        $permissions = $this->service->prepAndSend($url, [200], 'PUT', $body, true, 'application/collection+json');
 
         return self::batchDataToArray($permissions);
     }
@@ -117,21 +118,19 @@ class PermissionService
      *
      * @return array A set of RepositoryPermission that were created
      */
-    public function createRepositoryPermissions($permissions)
+    public function createRepositoryPermissions(array $permissions): array
     {
         $url = $this->restUrl2.'/permissions';
         $body = json_encode(['permission' => $permissions]);
-        $permissions = $this->service->prepAndSend($url, [201], 'POST', $body, true, 'application/collection+json', 'application/json');
+        $permissions = $this->service->prepAndSend($url, [201], 'POST', $body, true, 'application/collection+json');
 
         return self::batchDataToArray($permissions);
     }
 
     /**
      * Create a single RepositoryPermission.
-     *
-     * @return \Jaspersoft\Dto\Permission\RepositoryPermission
      */
-    public function createRepositoryPermission(RepositoryPermission $permission)
+    public function createRepositoryPermission(RepositoryPermission $permission): RepositoryPermission
     {
         $url = $this->restUrl2.'/permissions';
         $body = json_encode($permission);
@@ -142,8 +141,6 @@ class PermissionService
 
     /**
      * Delete a RepositoryPermission.
-     *
-     * @throws \Jaspersoft\Exception\RESTRequestException
      */
     public function deleteRepositoryPermission(RepositoryPermission $permission)
     {

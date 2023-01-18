@@ -2,13 +2,13 @@
 
 require_once __DIR__.'/BaseTest.php';
 
-class QueryServiceTest extends BaseTest
+class QueryExecutorTest extends BaseTest
 {
     protected $jc;
     protected $newUser;
     protected $query;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -23,12 +23,7 @@ class QueryServiceTest extends BaseTest
 EOF;
     }
 
-    public function tearDown()
-    {
-        parent::tearDown();
-    }
-
-    public function testQueryExecution()
+    public function testQueryExecution(): void
     {
         $run = $this->qs->executeQuery('/Domains/Simple_Domain', $this->query);
         // If data is set, then data was collected and the requst was successful

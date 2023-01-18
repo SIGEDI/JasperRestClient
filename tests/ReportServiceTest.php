@@ -7,7 +7,7 @@ class ReportServiceTest extends BaseTest
     protected $jc;
     protected $sample_report;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->rs = $this->jc->reportService();
@@ -18,15 +18,10 @@ class ReportServiceTest extends BaseTest
         $this->sample_report_size = 220000;	// pre-determined
     }
 
-    public function tearDown()
-    {
-        parent::tearDown();
-    }
-
     /**
      * Checks whether the sample report when acquired as a PDF file has a plausible content length.
      */
-    public function testRunReportGetsSomewhatProperFileSize()
+    public function testRunReportGetsSomewhatProperFileSize(): void
     {
         $data = $this->rs->runReport($this->sample_report, 'pdf');
         $this->assertGreaterThan($this->sample_report_size, mb_strlen($data));
@@ -36,7 +31,7 @@ class ReportServiceTest extends BaseTest
      * Checks whether HTML representation of Flash Chart Report is adequate, determined by
      * the required SWF file URL presence in output.
      */
-    public function testRunFlashChartReport()
+    public function testRunFlashChartReport(): void
     {
         $report = $this->rs->runReport('/reports/samples/FlashChartReport', 'html');
         $this->assertContains('fusion/charts/Bar2D.swf', $report);
@@ -45,7 +40,7 @@ class ReportServiceTest extends BaseTest
     /**
      * Checks whether running a report with custom options actually runs it so.
      */
-    public function testRunCascadingInputReportWithCustomOptions()
+    public function testRunCascadingInputReportWithCustomOptions(): void
     {
         $options = [
             'Country_multi_select' => ['USA', 'Canada'],
@@ -61,7 +56,7 @@ class ReportServiceTest extends BaseTest
     /**
      * Checks updateReportOptions() functionality by creating new ReportOptions, running them and verifying the output.
      */
-    public function testRunCascadingInputReportCreateOptions()
+    public function testRunCascadingInputReportCreateOptions(): void
     {
         $options = [
             'Country_multi_select' => ['Mexico', 'USA'],
@@ -82,13 +77,13 @@ class ReportServiceTest extends BaseTest
     /**
      * Checks running a report with custom options when this report has input controls of various types.
      */
-    public function testRunSalesByMonthReport()
+    public function testRunSalesByMonthReport(): void
     {
         $options = [
             'TextInput' => ['1234'],
             'CheckboxInput' => ['false'],
             'ListInput' => ['3'],
-            'DateInput' => ['2012-09-08'],             // Y-M-D
+            'DateInput' => ['2012-09-08'], // Y-M-D
             'QueryInput' => ['sally'],
         ];
         $report = $this->rs->runReport('/reports/samples/SalesByMonth', 'csv', null, null, $options);

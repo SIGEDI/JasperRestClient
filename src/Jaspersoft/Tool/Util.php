@@ -6,10 +6,8 @@ class Util
 {
     /**
      * This function will create an HTTP query string that may include repeated values.
-     *
-     * @return string
      */
-    public static function query_suffix($params)
+    public static function query_suffix($params): string
     {
         foreach ($params as $k => $v) {
             if (is_bool($v)) {

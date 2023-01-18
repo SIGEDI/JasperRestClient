@@ -44,8 +44,15 @@ class User
      */
     public $previousPasswordChangeTime;
 
-    public function __construct($username = null, $password = null, $emailAddress = null, $fullName = null,
-                                $tenantId = null, $enabled = null, $externallyDefined = null, $previousPasswordChangeTime = null)
+    public function __construct(
+        $username = null,
+        $password = null,
+        $emailAddress = null,
+        $fullName = null,
+        $tenantId = null,
+        $enabled = null,
+        $externallyDefined = null,
+        $previousPasswordChangeTime = null)
     {
         $this->username = $username;
         $this->password = $password;
@@ -58,7 +65,7 @@ class User
         $this->roles = [];
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $data = [];
         foreach (get_object_vars($this) as $k => $v) {

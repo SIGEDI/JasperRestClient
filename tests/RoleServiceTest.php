@@ -12,7 +12,7 @@ class RoleServiceTest extends BaseTest
     protected $newRole;
 
     /** Coverage: createRole **/
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -24,7 +24,7 @@ class RoleServiceTest extends BaseTest
     }
 
     /** Coverage: deleteRole **/
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         $this->rs->deleteRole($this->newRole);
@@ -33,7 +33,7 @@ class RoleServiceTest extends BaseTest
     /* Tests below */
 
     /** Coverage: updateRole, getRole **/
-    public function testUpdateRole()
+    public function testUpdateRole(): void
     {
         $oldName = $this->newRole->name;
         $this->newRole->name = 'ROLE_QA';
@@ -45,7 +45,7 @@ class RoleServiceTest extends BaseTest
     }
 
     /** Coverage: searchRoles **/
-    public function testsearchRoles()
+    public function testSearchRoles(): void
     {
         $roleCount = sizeof($this->rs->searchRoles());
         $this->assertTrue($roleCount > 2);

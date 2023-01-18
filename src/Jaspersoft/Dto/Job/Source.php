@@ -21,7 +21,7 @@ class Source
      */
     public $parameters = [];
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $result = [];
         if (!empty($this->reportUnitURI)) {
@@ -35,7 +35,7 @@ class Source
         return $result;
     }
 
-    public static function createFromJSON($json_obj)
+    public static function createFromJSON($json_obj): Source
     {
         $result = new self();
         foreach ($json_obj as $k => $v) {

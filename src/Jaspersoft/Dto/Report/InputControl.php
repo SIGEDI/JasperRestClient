@@ -36,7 +36,7 @@ class InputControl
         $this->error = (!empty($error)) ? strval($error) : null;
     }
 
-    public static function createFromJSON($json)
+    public static function createFromJSON($json): array
     {
         $data_array = json_decode($json, true);
         $result = [];
@@ -55,7 +55,7 @@ class InputControl
 
     private function addOption($label, $value, $selected)
     {
-        $temp = ['label' => strval($label), 'value' => strval($value), 'selected' => $selected];
+        $temp = ['label' => strval($label), 'value' => strval($value)];
         if ($selected === 1) {
             $temp['selected'] = 'true';
         } else {

@@ -15,7 +15,7 @@ class ReportOptions extends CollectiveResource
      * @param $name string the name of the parameter
      * @param $value array an array of the selected values for the parameter
      */
-    public function addParameter($name, $value)
+    public function addParameter(string $name, array $value)
     {
         $this->reportParameters[] = ['name' => $name, 'value' => $value];
     }

@@ -18,7 +18,7 @@ class Execution
     public $requestId;
     public $exports;
 
-    public static function createFromJSON($json_data)
+    public static function createFromJSON($json_data): Execution
     {
         $data = json_decode($json_data, true);
         $result = new self();

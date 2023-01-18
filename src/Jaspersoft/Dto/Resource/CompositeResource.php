@@ -13,7 +13,7 @@ if (!defined('RESOURCE_NAMESPACE')) {
  */
 abstract class CompositeResource extends Resource
 {
-    protected function resolveSubresource($field, $value, $class)
+    protected function resolveSubresource($field, $value, $class): ?array
     {
         if (is_string($value)) {
             // Subresource is a reference to another resource
@@ -122,10 +122,8 @@ abstract class CompositeResource extends Resource
 
     /** This function combines non-composite resources with the proper representation of composite resources
      * into a data array which can be encoded by json_encode() creating a valid request for the Report Server.
-     *
-     * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         $allFields = parent::jsonSerialize();
         $compositeFields = CompositeDTOMapper::compositeFields(get_class($this));
@@ -143,10 +141,8 @@ abstract class CompositeResource extends Resource
      *
      * @param $json_data array
      * @param $type string The class type to be created
-     *
-     * @return array
      */
-    public static function createFromJSON($json_data, $type = null)
+    public static function createFromJSON($json_data, $type = null): array
     {
         $className = explode('\\', $type);
         $className = lcfirst(end($className));

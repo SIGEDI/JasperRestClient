@@ -20,7 +20,7 @@ class RoleService
         $this->restUrl2 = $client->getURL();
     }
 
-    private function makeUrl($organization = null, $roleName = null, $params = null)
+    private function makeUrl($organization = null, $roleName = null, $params = null): string
     {
         if (!empty($organization)) {
             $url = $this->restUrl2.'/organizations/'.$organization.'/roles';
@@ -42,23 +42,25 @@ class RoleService
      * Search for many or all roles on the server.
      * You can search by organization as well.
      *
-     * @param string $organization
-     * @param bool   $includeSubOrgs Return roles from suborganizations?
-     * @param array  $user           retrieves the roles of specific user(s) in the array, users must be defined as username|organization if multitenancy is enabled (pro)
-     * @param bool   $hasAllUsers    Return the intersection of roles defined on all users in $user?
-     * @param string $q              A query string
-     * @param int    $limit          Limit number of results for pagination
-     * @param int    $offset         Begin search results from this point
-     *
-     * @throws \Jaspersoft\Exception\RESTRequestException
-     *
-     * @return array
+     * @param bool|null   $includeSubOrganizations Return roles from sub organizations?
+     * @param array|null  $user                    retrieves the roles of specific user(s) in the array, users must be defined as username|organization if multitenancy is enabled (pro)
+     * @param bool        $hasAllUsers             Return the intersection of roles defined on all users in $user?
+     * @param string|null $q                       A query string
+     * @param int         $limit                   Limit number of results for pagination
+     * @param int         $offset                  Begin search results from this point
      */
-    public function searchRoles($organization = null, $includeSubOrgs = null, $user = null, $hasAllUsers = false, $q = null, $limit = 0, $offset = 0)
-    {
+    public function searchRoles(
+        string $organization = null,
+        bool $includeSubOrganizations = null,
+        array $user = null,
+        bool $hasAllUsers = false,
+        string $q = null,
+        int $limit = 0,
+        int $offset = 0
+    ): array {
         $result = [];
-        $url = self::makeUrl($organization, null, compact('includeSubOrgs', 'user', 'hasAllUsers', 'q', 'limit', 'offset'));
-        $data = $this->service->prepAndSend($url, [200, 204], 'GET', null, true, 'application/json', 'application/json');
+        $url = self::makeUrl($organization, null, compact('includeSubOrganizations', 'user', 'hasAllUsers', 'q', 'limit', 'offset'));
+        $data = $this->service->prepAndSend($url, [200, 204], 'GET', null, true);
         $data = (!empty($data)) ? json_decode($data, true) : null;
         if ($data === null) {
             return $result;
@@ -72,18 +74,11 @@ class RoleService
 
     /**
      * Get a Role by its name.
-     *
-     * @param string $roleName
-     * @param string $organization
-     *
-     * @throws \Jaspersoft\Exception\RESTRequestException
-     *
-     * @return \Jaspersoft\Dto\Role\Role
      */
-    public function getRole($roleName, $organization = null)
+    public function getRole(string $roleName, string $organization = null): Role
     {
         $url = self::makeUrl($organization, $roleName);
-        $resp = $this->service->prepAndSend($url, [200], 'GET', null, true, 'application/json', 'application/json');
+        $resp = $this->service->prepAndSend($url, [200], 'GET', null, true);
         $data = json_decode($resp);
 
         return @new Role($data->name, $data->tenantId, $data->externallyDefined);
@@ -93,26 +88,22 @@ class RoleService
      * Add a new role.
      *
      * Provide a role object that represents the role you wish to add.
-     *
-     * @throws \Jaspersoft\Exception\RESTRequestException
      */
-    public function createRole(Role $role)
+    public function createRole(Role $role): void
     {
         $url = self::makeUrl($role->tenantId, $role->name);
-        $this->service->prepAndSend($url, [201, 200], 'PUT', json_encode($role), false, 'application/json', 'application/json');
+        $this->service->prepAndSend($url, [201, 200], 'PUT', json_encode($role));
     }
 
     /**
      * Remove a role currently in existence.
      *
      * Provide the Role object of the role you wish to remove. Use getRole() to retrieve Roles.
-     *
-     * @throws \Jaspersoft\Exception\RESTRequestException
      */
-    public function deleteRole(Role $role)
+    public function deleteRole(Role $role): void
     {
         $url = self::makeUrl($role->tenantId, $role->name);
-        $this->service->prepAndSend($url, [204], 'DELETE', null, false);
+        $this->service->prepAndSend($url, [204], 'DELETE');
     }
 
     /**
@@ -122,13 +113,11 @@ class RoleService
      * you wish to give the role. You can optionally provide a new tenantId if you wish to change
      * that as well.
      *
-     * @param string $oldName Previous name of role
-     *
-     * @throws \Jaspersoft\Exception\RESTRequestException
+     * @param string|null $oldName Previous name of role
      */
-    public function updateRole(Role $role, $oldName = null)
+    public function updateRole(Role $role, string $oldName = null)
     {
         $url = self::makeUrl($role->tenantId, $oldName);
-        $this->service->prepAndSend($url, [200, 201], 'PUT', json_encode($role), false, 'application/json', 'application/json');
+        $this->service->prepAndSend($url, [200, 201], 'PUT', json_encode($role));
     }
 }

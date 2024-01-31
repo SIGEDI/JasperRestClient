@@ -226,11 +226,13 @@ class RESTRequest
         $response = preg_replace("/^(?:HTTP\/1.1 100.*?\\r\\n\\r\\n)+/ms", '', $response);
 
         //  100-continue chunks are returned on multipart communications
-        $headerBlock = mb_strstr($response, "\r\n\r\n", true);
+        $headerBlock = mb_strstr($response, "\r\n\r\n", true, '8bit');
 
         // strstr returns the matched characters and following characters, but we want to discard of "\r\n\r\n", so
         // we delete the first 4 bytes of the returned string.
-        $this->responseBody = mb_substr(mb_strstr($response, "\r\n\r\n"), 4);
+        $responseHeaderBlock = mb_strstr($response, "\r\n\r\n", encoding: '8bit');
+        $this->responseBody = mb_substr($responseHeaderBlock, 4, encoding: '8bit');
+
         // headers are always separated by \n until the end of the header block which is separated by \r\n\r\n.
         $this->responseHeaders = explode("\r\n", $headerBlock);
 

@@ -314,12 +314,12 @@ class RESTRequest
         return $this->responseInfo;
     }
 
-    public function getUrl(): ?string
+    public function getUrl(): ?RESTRequest
     {
         return $this->url;
     }
 
-    public function setUrl(string $url): void
+    public function setUrl(?RESTRequest $url): void
     {
         $this->url = $url;
     }
@@ -374,7 +374,7 @@ class RESTRequest
      * @throws RESTRequestException
      */
     public function makeRequest(
-        string $url,
+        ?RESTRequest $url,
         array $expectedCodes = [200],
         ?string $verb = null,
         ?string $reqBody = null,
@@ -402,7 +402,7 @@ class RESTRequest
      * @throws RESTRequestException
      */
     public function prepAndSend(
-        string $url,
+        ?RESTRequest $url,
         array $expectedCodes = [200],
         ?string $verb = null,
         ?string $reqBody = null,
@@ -443,7 +443,7 @@ class RESTRequest
      * @throws Exception
      */
     public function multipartRequestSend(
-        string $url,
+        ?RESTRequest $url,
         int|string $expectedCode = 200,
         string $verb = 'PUT_MP',
         ?string $reqBody = null,
@@ -461,7 +461,7 @@ class RESTRequest
     /**
      * @throws RESTRequestException
      */
-    public function sendBinary(string $url, array $expectedCodes, array $body, string $contentType, string $contentDisposition, string $contentDescription, string $verb = 'POST'): ?string
+    public function sendBinary(?RESTRequest $url, array $expectedCodes, array $body, string $contentType, string $contentDisposition, string $contentDescription, string $verb = 'POST'): ?string
     {
         $this->flush();
         $this->setUrl($url);
@@ -488,7 +488,7 @@ class RESTRequest
         return $this->getResponseBody();
     }
 
-    private function performReset(string $url, ?string $verb, ?array $reqBody): void
+    private function performReset(?RESTRequest $url, ?string $verb, ?array $reqBody): void
     {
         $this->flush();
         $this->setUrl($url);

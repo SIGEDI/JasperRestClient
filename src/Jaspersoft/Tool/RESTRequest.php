@@ -80,7 +80,6 @@ class RESTRequest
         $this->responseInfo = null;
         $this->contentType = 'application/json';
         $this->acceptType = 'application/json';
-        $this->fileToUpload = null;
         $this->headers = null;
     }
 

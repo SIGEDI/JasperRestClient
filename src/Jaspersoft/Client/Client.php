@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Jaspersoft\Client;
 
 use Jaspersoft\Exception\RESTRequestException;
+use Jaspersoft\Service\ReportService;
 use Jaspersoft\Tool\RESTRequest;
 
 /**
@@ -38,6 +39,15 @@ class Client
         }
         $this->restReq->setPassword($this->password);
         $this->restUrl2 = $this->serverUrl.self::BASE_REST2_URL;
+    }
+
+    public function reportService(): ReportService
+    {
+        if (!isset($this->reportService)) {
+            $this->reportService = new ReportService($this);
+        }
+
+        return $this->reportService;
     }
 
     /** setRequestTimeout.

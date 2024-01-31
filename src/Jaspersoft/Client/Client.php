@@ -55,6 +55,7 @@ class Client
             $this->restReq->setUsername($this->username);
         }
         $this->restReq->setPassword($this->password);
+        $this->restReq->setUrl($this->restUrl2);
         $this->restUrl2 = $this->serverUrl.BASE_REST2_URL;
     }
 

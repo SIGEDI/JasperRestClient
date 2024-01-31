@@ -1,42 +1,46 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Jaspersoft\Tool;
 
+use CurlHandle;
+use Exception;
+use InvalidArgumentException;
 use Jaspersoft\Exception\RESTRequestException;
 
 class RESTRequest
 {
-    protected $url;
-    protected $verb;
-    protected $request_body;
-    protected $request_length;
-    protected $username;
-    protected $password;
-    protected $accept_type;
-    protected $content_type;
-    protected $response_body;
-    protected $response_info;
-    protected $file_to_upload = [];
-    protected $headers;
-    protected $curl_timeout;
-    private $response_headers;
+    protected string $url;
+    protected ?string $verb;
+    protected ?array $requestBody;
+    protected int $requestLength;
+    protected ?string $username;
+    protected ?string $password;
+    protected ?string $acceptType;
+    protected string $contentType;
+    protected bool|string|null $responseBody;
+    protected mixed $responseInfo;
+    protected ?array $headers;
+    protected int $curlTimeout;
+    private array $responseHeaders;
 
-    public function __construct($url = null, $verb = 'GET', $request_body = null)
+    public function __construct(?string $url = null, ?string $verb = 'GET', ?array $requestBody = null)
     {
         $this->url = $url;
         $this->verb = $verb;
-        $this->request_body = $request_body;
-        $this->request_length = 0;
+        $this->requestBody = $requestBody;
+        $this->requestLength = 0;
         $this->username = null;
         $this->password = null;
-        $this->accept_type = null;
-        $this->content_type = 'application/json';
-        $this->response_body = null;
-        $this->response_info = null;
-        $this->file_to_upload = [];
-        $this->curl_timeout = 30;
+        $this->acceptType = null;
+        $this->contentType = 'application/json';
+        $this->responseBody = null;
+        $this->responseInfo = null;
+        $this->fileToUpload = [];
+        $this->curlTimeout = 30;
 
-        if ($this->request_body !== null) {
+        if (null !== $this->requestBody) {
             $this->buildPostBody();
         }
     }
@@ -69,14 +73,14 @@ class RESTRequest
 
     public function flush(): void
     {
-        $this->request_body = null;
-        $this->request_length = 0;
+        $this->requestBody = null;
+        $this->requestLength = 0;
         $this->verb = 'GET';
-        $this->response_body = null;
-        $this->response_info = null;
-        $this->content_type = 'application/json';
-        $this->accept_type = 'application/json';
-        $this->file_to_upload = null;
+        $this->responseBody = null;
+        $this->responseInfo = null;
+        $this->contentType = 'application/json';
+        $this->acceptType = 'application/json';
+        $this->fileToUpload = null;
         $this->headers = null;
     }
 
@@ -116,40 +120,40 @@ class RESTRequest
                     $this->executeBinarySend($ch);
                     break;
                 default:
-                    throw new \InvalidArgumentException('Current verb ('.$this->verb.') is an invalid REST verb.');
+                    throw new InvalidArgumentException('Current verb ('.$this->verb.') is an invalid REST verb.');
             }
-        } catch (\InvalidArgumentException|\Exception $e) {
+        } catch (InvalidArgumentException|Exception $e) {
             curl_close($ch);
             throw $e;
         }
     }
 
-    public function buildPostBody($data = null): void
+    public function buildPostBody(?array $data = null): void
     {
-        $data = ($data !== null) ? $data : $this->request_body;
-        $this->request_body = $data;
+        $data = (null !== $data) ? $data : $this->requestBody;
+        $this->requestBody = $data;
     }
 
-    protected function executeGet($ch): void
+    protected function executeGet(CurlHandle $ch): void
     {
         $this->doExecute($ch);
     }
 
-    protected function executePost($ch): void
+    protected function executePost(CurlHandle $ch): void
     {
-        if (!is_string($this->request_body)) {
+        if (!is_string($this->requestBody)) {
             $this->buildPostBody();
         }
 
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $this->request_body);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $this->requestBody);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
 
         $this->doExecute($ch);
     }
 
-    protected function executeBinarySend($ch): void
+    protected function executeBinarySend(CurlHandle $ch): void
     {
-        $post = $this->request_body;
+        $post = $this->requestBody;
 
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $this->verb);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
@@ -157,68 +161,68 @@ class RESTRequest
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
 
-        $this->response_body = curl_exec($ch);
-        $this->response_info = curl_getinfo($ch);
+        $this->responseBody = curl_exec($ch);
+        $this->responseInfo = curl_getinfo($ch);
 
         curl_close($ch);
     }
 
     // Set verb to PUT_MP to use this function
-    protected function executePutMultipart($ch): void
+    protected function executePutMultipart(CurlHandle $ch): void
     {
-        $post = $this->request_body;
+        $post = $this->requestBody;
 
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
         curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
         curl_setopt($ch, CURLOPT_URL, $this->url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-        $this->response_body = curl_exec($ch);
-        $this->response_info = curl_getinfo($ch);
+        $this->responseBody = curl_exec($ch);
+        $this->responseInfo = curl_getinfo($ch);
 
         curl_close($ch);
     }
 
     // Set verb to POST_MP to use this function
-    protected function executePostMultipart($ch): void
+    protected function executePostMultipart(CurlHandle $ch): void
     {
-        $post = $this->request_body;
+        $post = $this->requestBody;
 
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
         curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
         curl_setopt($ch, CURLOPT_URL, $this->url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-        $this->response_body = curl_exec($ch);
-        $this->response_info = curl_getinfo($ch);
+        $this->responseBody = curl_exec($ch);
+        $this->responseInfo = curl_getinfo($ch);
 
         curl_close($ch);
     }
 
-    protected function executePut($ch): void
+    protected function executePut(CurlHandle $ch): void
     {
-        if (!is_string($this->request_body)) {
+        if (!is_string($this->requestBody)) {
             $this->buildPostBody();
         }
 
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $this->request_body);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $this->requestBody);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
 
         $this->doExecute($ch);
     }
 
-    protected function executeDelete($ch): void
+    protected function executeDelete(CurlHandle $ch): void
     {
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
 
         $this->doExecute($ch);
     }
 
-    protected function doExecute(&$curlHandle): void
+    protected function doExecute(CurlHandle $curlHandle): void
     {
         $this->setCurlOpts($curlHandle);
         $response = curl_exec($curlHandle);
-        $this->response_info = curl_getinfo($curlHandle);
+        $this->responseInfo = curl_getinfo($curlHandle);
 
         $response = preg_replace("/^(?:HTTP\/1.1 100.*?\\r\\n\\r\\n)+/ms", '', $response);
 
@@ -227,146 +231,115 @@ class RESTRequest
 
         // strstr returns the matched characters and following characters, but we want to discard of "\r\n\r\n", so
         // we delete the first 4 bytes of the returned string.
-        $this->response_body = mb_substr(mb_strstr($response, "\r\n\r\n"), 4);
+        $this->responseBody = mb_substr(mb_strstr($response, "\r\n\r\n"), 4);
         // headers are always separated by \n until the end of the header block which is separated by \r\n\r\n.
-        $this->response_headers = explode("\r\n", $headerBlock);
+        $this->responseHeaders = explode("\r\n", $headerBlock);
 
         curl_close($curlHandle);
     }
 
-    protected function setCurlOpts(&$curlHandle): void
+    protected function setCurlOpts(CurlHandle $curlHandle): void
     {
         curl_setopt($curlHandle, CURLOPT_URL, $this->url);
         curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curlHandle, CURLOPT_COOKIEFILE, '/dev/null');
         curl_setopt($curlHandle, CURLOPT_HEADER, true);
 
-        if (!empty($this->content_type)) {
-            $this->headers[] = 'Content-Type: '.$this->content_type;
+        if (!empty($this->contentType)) {
+            $this->headers[] = 'Content-Type: '.$this->contentType;
         }
-        if (!empty($this->accept_type)) {
-            $this->headers[] = 'Accept: '.$this->accept_type;
+        if (!empty($this->acceptType)) {
+            $this->headers[] = 'Accept: '.$this->acceptType;
         }
         if (!empty($this->headers)) {
             curl_setopt($curlHandle, CURLOPT_HTTPHEADER, $this->headers);
         }
     }
 
-    protected function setAuth(&$curlHandle): void
+    protected function setAuth(CurlHandle $curlHandle): void
     {
-        if ($this->username !== null && $this->password !== null) {
+        if (null !== $this->username && null !== $this->password) {
             curl_setopt($curlHandle, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
             curl_setopt($curlHandle, CURLOPT_USERPWD, $this->username.':'.$this->password);
         }
     }
 
-    protected function setTimeout(&$curlHandle): void
+    protected function setTimeout(CurlHandle $curlHandle): void
     {
-        curl_setopt($curlHandle, CURLOPT_TIMEOUT, $this->curl_timeout);
+        curl_setopt($curlHandle, CURLOPT_TIMEOUT, $this->curlTimeout);
     }
 
-    public function defineTimeout($seconds): void
+    public function defineTimeout(int $seconds): void
     {
-        $this->curl_timeout = $seconds;
+        $this->curlTimeout = $seconds;
     }
 
-    public function getFileToUpload(): array
+    public function getAcceptType(): ?string
     {
-        return $this->file_to_upload;
+        return $this->acceptType;
     }
 
-    public function setFileToUpload($filepath): void
+    public function setAcceptType(?string $acceptType): void
     {
-        $this->file_to_upload = $filepath;
-    }
-
-    /**
-     * @return null
-     */
-    public function getAcceptType()
-    {
-        return $this->accept_type;
-    }
-
-    public function setAcceptType($accept_type): void
-    {
-        $this->accept_type = $accept_type;
+        $this->acceptType = $acceptType;
     }
 
     public function getContentType(): string
     {
-        return $this->content_type;
+        return $this->contentType;
     }
 
-    public function setContentType($content_type): void
+    public function setContentType(string $contentType): void
     {
-        $this->content_type = $content_type;
+        $this->contentType = $contentType;
     }
 
-    /**
-     * @return null
-     */
-    public function getPassword()
+    public function getPassword(): ?string
     {
         return $this->password;
     }
 
-    public function setPassword($password): void
+    public function setPassword(?string $password): void
     {
         $this->password = $password;
     }
 
-    /**
-     * @return null
-     */
-    public function getResponseBody()
+    public function getResponseBody(): ?string
     {
-        return $this->response_body;
+        return $this->responseBody;
     }
 
-    /**
-     * @return null
-     */
-    public function getResponseInfo()
+    public function getResponseInfo(): mixed
     {
-        return $this->response_info;
+        return $this->responseInfo;
     }
 
-    /**
-     * @return mixed|null
-     */
-    public function getUrl()
+    public function getUrl(): ?string
     {
         return $this->url;
     }
 
-    public function setUrl($url): void
+    public function setUrl(string $url): void
     {
         $this->url = $url;
     }
 
-    /**
-     * @return null
-     */
-    public function getUsername()
+    public function getUsername(): ?string
     {
         return $this->username;
     }
 
-    public function setUsername($username): void
+    public function setUsername(?string $username): void
     {
         $this->username = $username;
     }
 
-    /**
-     * @return mixed|string
-     */
-    public function getVerb()
+    public function getVerb(): ?string
     {
         return $this->verb;
     }
 
-    public function setVerb($verb): void
+    public function setVerb(?string $verb): void
     {
         $this->verb = $verb;
     }
@@ -374,7 +347,7 @@ class RESTRequest
     /**
      * @throws RESTRequestException
      */
-    public function handleError($statusCode, $expectedCodes, $responseBody)
+    public function handleError(int $statusCode, array $expectedCodes, ?string $responseBody)
     {
         if (!empty($responseBody)) {
             $errorData = json_decode($responseBody);
@@ -401,22 +374,21 @@ class RESTRequest
      * @throws RESTRequestException
      */
     public function makeRequest(
-        $url,
-        $expectedCodes = [200],
-        $verb = null,
-        $reqBody = null,
-        $returnData = false,
-        $contentType = 'application/json',
-        $acceptType = 'application/json',
-        $headers = []
-    ): array
-    {
+        string $url,
+        array $expectedCodes = [200],
+        ?string $verb = null,
+        ?string $reqBody = null,
+        bool $returnData = false,
+        string $contentType = 'application/json',
+        string $acceptType = 'application/json',
+        array $headers = []
+    ): array {
         $this->performReset($url, $verb, $reqBody);
         $info = $this->getResponseInfo();
         $statusCode = $info['http_code'];
         $body = $this->getResponseBody();
 
-        $headers = $this->response_headers;
+        $headers = $this->responseHeaders;
 
         // An exception is thrown here if the expected code does not match the status code in the response
         if (!in_array($statusCode, $expectedCodes, true)) {
@@ -428,19 +400,17 @@ class RESTRequest
 
     /**
      * @throws RESTRequestException
-     *
-     * @return true|null
      */
     public function prepAndSend(
-        $url,
-        $expectedCodes = [200],
-        $verb = null,
-        $reqBody = null,
-        $returnData = false,
-        $contentType = 'application/json',
-        $acceptType = 'application/json',
-        $headers = []
-    ) {
+        string $url,
+        array $expectedCodes = [200],
+        ?string $verb = null,
+        ?string $reqBody = null,
+        bool $returnData = false,
+        string $contentType = 'application/json',
+        string $acceptType = 'application/json',
+        array $headers = []
+    ): bool|string|null {
         $this->performReset($url, $verb, $reqBody);
         $statusCode = $this->getResponseInfo();
         $responseBody = $this->getResponseBody();
@@ -468,16 +438,16 @@ class RESTRequest
      * @param array|null  $file         - An array with the URI string representing the image, and the filepath to the image. (i.e: array('/images/JRLogo', '/home/user/jasper.jpg') )
      * @param bool        $returnData   - whether you wish to receive the data returned by the server or not
      *
-     * @throws \Exception
-     *
      * @return array - Returns an array with the response info and the response body, since the server sends a 100 request, it is hard to validate the success of the request
+     *
+     * @throws Exception
      */
     public function multipartRequestSend(
         string $url,
-        $expectedCode = 200,
+        int|string $expectedCode = 200,
         string $verb = 'PUT_MP',
-        string $reqBody = null,
-        array $file = null,
+        ?string $reqBody = null,
+        ?array $file = null,
         bool $returnData = false
     ): array {
         $this->performReset($url, $verb, $reqBody);
@@ -491,7 +461,7 @@ class RESTRequest
     /**
      * @throws RESTRequestException
      */
-    public function sendBinary($url, $expectedCodes, $body, $contentType, $contentDisposition, $contentDescription, $verb = 'POST')
+    public function sendBinary(string $url, array $expectedCodes, array $body, string $contentType, string $contentDisposition, string $contentDescription, string $verb = 'POST'): ?string
     {
         $this->flush();
         $this->setUrl($url);
@@ -518,24 +488,15 @@ class RESTRequest
         return $this->getResponseBody();
     }
 
-    private function performReset($url, $verb, $reqBody): void
+    private function performReset(string $url, ?string $verb, ?array $reqBody): void
     {
         $this->flush();
         $this->setUrl($url);
-        if ($verb !== null) {
+        if (null !== $verb) {
             $this->setVerb($verb);
         }
-        if ($reqBody !== null) {
+        if (null !== $reqBody) {
             $this->buildPostBody($reqBody);
-        }
-        if (!empty($contentType)) {
-            $this->setContentType($contentType);
-        }
-        if (!empty($acceptType)) {
-            $this->setAcceptType($acceptType);
-        }
-        if (!empty($headers)) {
-            $this->headers = $headers;
         }
 
         $this->execute();

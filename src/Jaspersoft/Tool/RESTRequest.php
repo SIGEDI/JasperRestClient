@@ -11,7 +11,7 @@ use Jaspersoft\Exception\RESTRequestException;
 
 class RESTRequest
 {
-    protected string $url;
+    protected ?RESTRequest $url;
     protected ?string $verb;
     protected ?array $requestBody;
     protected int $requestLength;
@@ -25,7 +25,7 @@ class RESTRequest
     protected int $curlTimeout;
     private array $responseHeaders;
 
-    public function __construct(?string $url = null, ?string $verb = 'GET', ?array $requestBody = null)
+    public function __construct(?RESTRequest $url = null, ?string $verb = 'GET', ?array $requestBody = null)
     {
         $this->url = $url;
         $this->verb = $verb;

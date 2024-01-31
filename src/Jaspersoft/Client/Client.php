@@ -23,7 +23,7 @@ class Client
     protected ?string $orgId;
     private string $serverUrl;
 
-    public function __construct($serverUrl, $username, $password, $orgId = null)
+    public function __construct(string $serverUrl, string $username, string $password, ?string $orgId = null)
     {
         $this->serverUrl = $serverUrl;
         $this->username = $username;

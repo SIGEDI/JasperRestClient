@@ -1,20 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Jaspersoft\Client;
 
-use Jaspersoft\Service\ImportExportService;
-use Jaspersoft\Service\JobService;
-use Jaspersoft\Service\OptionsService;
-use Jaspersoft\Service\OrganizationService;
-use Jaspersoft\Service\PermissionService;
-use Jaspersoft\Service\QueryService;
+use Jaspersoft\Exception\RESTRequestException;
 use Jaspersoft\Service\ReportService;
-use Jaspersoft\Service\RepositoryService;
-use Jaspersoft\Service\RoleService;
-use Jaspersoft\Service\UserService;
 use Jaspersoft\Tool\RESTRequest;
-
-define('BASE_REST2_URL', '/rest_v2');
 
 /**
  * Class Client.
@@ -23,25 +15,18 @@ define('BASE_REST2_URL', '/rest_v2');
  */
 class Client
 {
-    private $restReq;
-    private $restUrl2;
-    protected $hostname;
-    protected $username;
-    protected $password;
-    protected $orgId;
-    protected $repositoryService;
-    protected $userService;
-    protected $organizationService;
-    protected $roleService;
-    protected $jobService;
-    protected $permissionService;
-    protected $optionsService;
-    protected $reportService;
-    protected $importExportService;
-    protected $queryService;
-    private $serverUrl;
+    private const BASE_REST2_URL = '/rest_v2';
 
-    public function __construct($serverUrl, $username, $password, $orgId = null)
+    private RESTRequest $restReq;
+    private string $restUrl2;
+    protected string $username;
+    protected string $password;
+    protected ?string $orgId;
+
+    protected ReportService $reportService;
+    private string $serverUrl;
+
+    public function __construct(string $serverUrl, string $username, string $password, ?string $orgId = null)
     {
         $this->serverUrl = $serverUrl;
         $this->username = $username;
@@ -55,70 +40,7 @@ class Client
             $this->restReq->setUsername($this->username);
         }
         $this->restReq->setPassword($this->password);
-        $this->restUrl2 = $this->serverUrl.BASE_REST2_URL;
-    }
-
-    public function repositoryService(): RepositoryService
-    {
-        if (!isset($this->repositoryService)) {
-            $this->repositoryService = new RepositoryService($this);
-        }
-
-        return $this->repositoryService;
-    }
-
-    public function userService(): UserService
-    {
-        if (!isset($this->userService)) {
-            $this->userService = new UserService($this);
-        }
-
-        return $this->userService;
-    }
-
-    public function organizationService(): OrganizationService
-    {
-        if (!isset($this->organizationService)) {
-            $this->organizationService = new OrganizationService($this);
-        }
-
-        return $this->organizationService;
-    }
-
-    public function roleService(): RoleService
-    {
-        if (!isset($this->roleService)) {
-            $this->roleService = new RoleService($this);
-        }
-
-        return $this->roleService;
-    }
-
-    public function jobService(): JobService
-    {
-        if (!isset($this->jobService)) {
-            $this->jobService = new JobService($this);
-        }
-
-        return $this->jobService;
-    }
-
-    public function permissionService(): PermissionService
-    {
-        if (!isset($this->permissionService)) {
-            $this->permissionService = new PermissionService($this);
-        }
-
-        return $this->permissionService;
-    }
-
-    public function optionsService(): OptionsService
-    {
-        if (!isset($this->optionsService)) {
-            $this->optionsService = new OptionsService($this);
-        }
-
-        return $this->optionsService;
+        $this->restUrl2 = $this->serverUrl.self::BASE_REST2_URL;
     }
 
     public function reportService(): ReportService
@@ -130,31 +52,13 @@ class Client
         return $this->reportService;
     }
 
-    public function importExportService(): ImportExportService
-    {
-        if (!isset($this->importExportService)) {
-            $this->importExportService = new ImportExportService($this);
-        }
-
-        return $this->importExportService;
-    }
-
-    public function queryService(): QueryService
-    {
-        if (!isset($this->queryService)) {
-            $this->queryService = new QueryService($this);
-        }
-
-        return $this->queryService;
-    }
-
     /** setRequestTimeout.
      *
      * Set the amount of time cURL is permitted to wait for a response to a request before timing out.
      *
      * @param $seconds int Time in seconds
      */
-    public function setRequestTimeout(int $seconds)
+    public function setRequestTimeout(int $seconds): void
     {
         $this->restReq->defineTimeout($seconds);
     }
@@ -168,6 +72,8 @@ class Client
      * - Build
      * - Features
      * - License type and expiration
+     *
+     * @throws RESTRequestException
      */
     public function serverInfo(): array
     {

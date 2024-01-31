@@ -1,49 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Jaspersoft\Exception;
 
-class RESTRequestException extends \Exception
+use Exception;
+
+class RESTRequestException extends Exception
 {
     public const UNEXPECTED_CODE_MSG = 'An unexpected HTTP status code was returned by the server';
 
-    /** Internal Error Message.
-     *
-     * @var string
-     */
-    public $message;
+    public array $expectedStatusCodes;
 
-    /** Expected HTTP Status Codes.
-     *
-     * @var array
-     */
-    public $expectedStatusCodes;
+    public int $statusCode;
 
-    /** HTTP Status Code Given.
-     *
-     * @var int
-     */
-    public $statusCode;
+    public string $errorCode;
 
-    /** Message returned by JRS.
-     *
-     * @var string
-     */
-    public $jrsMessage;
+    public array $parameters;
 
-    /** Error Code returned by JRS.
-     *
-     * @var string
-     */
-    public $errorCode;
-
-    /** Parameters returned by JRS.
-     *
-     * @var array
-     */
-    public $parameters;
-
-    public function __construct($message)
+    public function __construct(public $message = '')
     {
-        $this->message = $message;
+        parent::__construct($message);
     }
 }

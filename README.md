@@ -1,7 +1,7 @@
 PHP REST Client for JRS
 =======================================
 
-This is a copy of Jaspersoft/jrs-rest-php-client with small enhancements.
+This is a copy of jaspersoft/jrs-rest-php-client with small enhancements.
 
 Introduction
 -------------
@@ -9,15 +9,11 @@ Using this library you can make requests and interact with the Jasper Reports Se
 
 Requirements
 -------------
-To use this client, you will need:
-- JasperReports Server (version >= 5.2) 
-- PHP (version >= 7.2.5, with cURL extension)
-- Composer dependency manager <http://getcomposer.org/download> (Optional, but recommended)
-
+![Packagist PHP Version](https://img.shields.io/packagist/dependency-v/sigedi/jasper-rest-client/php)
 
 Installation
 -------------
-Add the following to your composer.json file for your project, or run `php composer.phar reqiure jaspersoft/rest-client dev-master` in the directory of your project
+Run `composer require sigedi/jasper-rest-client` or add the following to your composer.json file:
 
     {
 	    "require": {
@@ -25,22 +21,10 @@ Add the following to your composer.json file for your project, or run `php compo
 	    }
     }
 
-Or alternatively, download this package from github, and run `php composer.phar install` in the directory containing composer.json to generate the autoloader, then require the autoloader using
-
-    require_once "vendor/autoload.php"
-	
-Additionally, a distributed autoloader is included if oyu want to simply include it in an existing project, or do not want to bother with Composer.
-
-	require_once "autoload.dist.php"
-
 
 Security Notice
 ----------------
 This package uses BASIC authentication to identify itself with the server. This package should only be used over a trusted connection between your report server and your web server.
-
-PHPUnits
---------
-The tests contained in this package are integration tests and are _not intended to be ran on a production server!_
 
 License
 --------

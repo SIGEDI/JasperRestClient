@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Jaspersoft\Service;
 
 use Jaspersoft\Client\Client;
-use Jaspersoft\Dto\Report\InputControl;
+use Jaspersoft\Exception\RESTRequestException;
+use Jaspersoft\Tool\RESTRequest;
 use Jaspersoft\Tool\Util;
 
 /**
@@ -11,10 +14,10 @@ use Jaspersoft\Tool\Util;
  */
 class ReportService
 {
-    protected $service;
-    protected $restUrl2;
+    protected RESTRequest $service;
+    protected string $restUrl2;
 
-    public function __construct(Client &$client)
+    public function __construct(Client $client)
     {
         $this->service = $client->getService();
         $this->restUrl2 = $client->getURL();
@@ -35,19 +38,21 @@ class ReportService
      * @param string|null $transformerKey    For use when running a report as a JasperPrint. Specifies print element transformers
      *
      * @return string Binary data of report
+     *
+     * @throws RESTRequestException
      */
     public function runReport(
         string $uri,
         string $format = 'pdf',
-        string $pages = null,
-        string $attachmentsPrefix = null,
-        array $inputControls = null,
+        ?string $pages = null,
+        ?string $attachmentsPrefix = null,
+        ?array $inputControls = null,
         bool $interactive = true,
         bool $onePagePerSheet = false,
         bool $freshData = true,
         bool $saveDataSnapshot = false,
-        string $transformerKey = null): string
-    {
+        ?string $transformerKey = null
+    ): string {
         $url = $this->restUrl2.'/reports'.$uri.'.'.$format;
         if (empty($inputControls)) {
             $url .= '?'.Util::query_suffix(compact('pages', 'attachmentsPrefix', 'interactive', 'onePagePerSheet', 'freshData', 'saveDataSnapshot', 'transformerKey'));
@@ -56,16 +61,5 @@ class ReportService
         }
 
         return $this->service->prepAndSend($url, [200], 'GET', null, true);
-    }
-
-    /**
-     * This function will request the possible values and data behind all the input controls of a report.
-     */
-    public function getReportInputControls(string $uri): array
-    {
-        $url = $this->restUrl2.'/reports'.$uri.'/inputControls/values';
-        $data = $this->service->prepAndSend($url, [200], 'GET', null, true);
-
-        return InputControl::createFromJSON($data);
     }
 }

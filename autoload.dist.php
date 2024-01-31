@@ -1,6 +1,8 @@
 <?php
 
-define('JASPERCLIENT_ROOT', __DIR__.'/src/');
+declare(strict_types=1);
+
+const JASPERCLIENT_ROOT = __DIR__.'/src/';
 
 spl_autoload_register(function ($class) {
     $location = JASPERCLIENT_ROOT.$class.'.php';

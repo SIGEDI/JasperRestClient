@@ -22,6 +22,8 @@ class Client
     protected string $username;
     protected string $password;
     protected ?string $orgId;
+
+    protected ReportService $reportService;
     private string $serverUrl;
 
     public function __construct(string $serverUrl, string $username, string $password, ?string $orgId = null)

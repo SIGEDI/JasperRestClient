@@ -22,8 +22,10 @@ class RESTRequest
     protected bool|string|null $responseBody;
     protected mixed $responseInfo;
     protected ?array $headers;
+
     protected int $curlTimeout;
     private array $responseHeaders;
+
 
     public function __construct(?RESTRequest $url = null, ?string $verb = 'GET', ?array $requestBody = null)
     {
@@ -37,7 +39,6 @@ class RESTRequest
         $this->contentType = 'application/json';
         $this->responseBody = null;
         $this->responseInfo = null;
-        $this->fileToUpload = [];
         $this->curlTimeout = 30;
 
         if (null !== $this->requestBody) {

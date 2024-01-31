@@ -11,7 +11,7 @@ use Jaspersoft\Exception\RESTRequestException;
 
 class RESTRequest
 {
-    protected ?RESTRequest $url;
+    protected RESTRequest|string|null $url;
     protected ?string $verb;
     protected ?array $requestBody;
     protected int $requestLength;
@@ -26,8 +26,7 @@ class RESTRequest
     protected int $curlTimeout;
     private array $responseHeaders;
 
-
-    public function __construct(?RESTRequest $url = null, ?string $verb = 'GET', ?array $requestBody = null)
+    public function __construct(RESTRequest|string|null $url = null, ?string $verb = 'GET', ?array $requestBody = null)
     {
         $this->url = $url;
         $this->verb = $verb;
@@ -55,7 +54,7 @@ class RESTRequest
      *
      * @return array
      */
-    public $errorCode;
+    public array $errorCode;
 
     public static function splitHeaderArray($array): array
     {
@@ -315,12 +314,12 @@ class RESTRequest
         return $this->responseInfo;
     }
 
-    public function getUrl(): ?RESTRequest
+    public function getUrl(): RESTRequest|string|null
     {
         return $this->url;
     }
 
-    public function setUrl(?RESTRequest $url): void
+    public function setUrl(RESTRequest|string|null $url): void
     {
         $this->url = $url;
     }
@@ -375,7 +374,7 @@ class RESTRequest
      * @throws RESTRequestException
      */
     public function makeRequest(
-        ?RESTRequest $url,
+        RESTRequest|string|null $url,
         array $expectedCodes = [200],
         ?string $verb = null,
         ?string $reqBody = null,
@@ -403,7 +402,7 @@ class RESTRequest
      * @throws RESTRequestException
      */
     public function prepAndSend(
-        ?RESTRequest $url,
+        RESTRequest|string|null $url,
         array $expectedCodes = [200],
         ?string $verb = null,
         ?string $reqBody = null,
@@ -432,19 +431,17 @@ class RESTRequest
      * This function creates a multipart/form-data request and sends it to the server.
      * this function should only be used when a file is to be sent with a request (PUT/POST).
      *
-     * @param string      $url          - URL to send request to
-     * @param int|string  $expectedCode - HTTP Status Code you expect to receive on success
-     * @param string      $verb         - HTTP Verb to send with request
-     * @param string|null $reqBody      - The body of the request if necessary
-     * @param array|null  $file         - An array with the URI string representing the image, and the filepath to the image. (i.e: array('/images/JRLogo', '/home/user/jasper.jpg') )
-     * @param bool        $returnData   - whether you wish to receive the data returned by the server or not
+     * @param RESTRequest|string|null $url          - URL to send request to
+     * @param int|string              $expectedCode - HTTP Status Code you expect to receive on success
+     * @param string                  $verb         - HTTP Verb to send with request
+     * @param string|null             $reqBody      - The body of the request if necessary
+     * @param array|null              $file         - An array with the URI string representing the image, and the filepath to the image. (i.e: array('/images/JRLogo', '/home/user/jasper.jpg') )
+     * @param bool                    $returnData   - whether you wish to receive the data returned by the server or not
      *
      * @return array - Returns an array with the response info and the response body, since the server sends a 100 request, it is hard to validate the success of the request
-     *
-     * @throws Exception
      */
     public function multipartRequestSend(
-        ?RESTRequest $url,
+        RESTRequest|string|null $url,
         int|string $expectedCode = 200,
         string $verb = 'PUT_MP',
         ?string $reqBody = null,
@@ -462,7 +459,7 @@ class RESTRequest
     /**
      * @throws RESTRequestException
      */
-    public function sendBinary(?RESTRequest $url, array $expectedCodes, array $body, string $contentType, string $contentDisposition, string $contentDescription, string $verb = 'POST'): ?string
+    public function sendBinary(RESTRequest|string|null $url, array $expectedCodes, array $body, string $contentType, string $contentDisposition, string $contentDescription, string $verb = 'POST'): ?string
     {
         $this->flush();
         $this->setUrl($url);
@@ -489,7 +486,7 @@ class RESTRequest
         return $this->getResponseBody();
     }
 
-    private function performReset(?RESTRequest $url, ?string $verb, ?array $reqBody): void
+    private function performReset(RESTRequest|string|null $url, ?string $verb, ?array $reqBody): void
     {
         $this->flush();
         $this->setUrl($url);
